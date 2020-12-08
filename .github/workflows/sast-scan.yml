@@ -26,5 +26,9 @@ jobs:
       - name: sast-scan
         uses: AppThreat/sast-scan-action@1.0.2
         with:
-          src: /github/workspace/vroomrr-app/
-          output: default
+      # Source directory to scan. Defaults to workspace
+          src: /github/workspace # optional, default is /github/workspace
+          # Output directory for the generated reports. Defaults to reports
+          output: /github/workspace # optional, default is /github/workspace/reports
+          # Project type. Eg: java, python, nodejs. Comma separated values allowed.
+          type: Java # optional
