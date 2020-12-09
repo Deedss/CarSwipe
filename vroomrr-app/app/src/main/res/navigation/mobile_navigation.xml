@@ -3,23 +3,35 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@+id/nav_swipe">
 
     <fragment
-        android:id="@+id/nav_home"
-        android:name="com.secprog.vroomrr.ui.home.HomeFragment"
+        android:id="@+id/nav_swipe"
+        android:name="com.example.vroomrr.ui.swipe.SwipeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_swipe" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.secprog.vroomrr.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_chat"
+        android:name="com.example.vroomrr.ui.chat.ChatFragment"
+        android:label="@string/menu_chat"
+        tools:layout="@layout/fragment_chat" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.secprog.vroomrr.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_info"
+        android:name="com.example.vroomrr.ui.info.InfoFragment"
+        android:label="@string/menu_info"
+        tools:layout="@layout/fragment_info" />
+
+    <fragment
+        android:id="@+id/nav_car"
+        android:name="com.example.vroomrr.ui.car.CarFragment"
+        android:label="@string/menu_car"
+        tools:layout="@layout/fragment_car" />
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.example.vroomrr.ui.settings.SettingsFragment"
+        android:label="@string/menu_settings"
+        tools:layout="@layout/fragment_settings" />
 </navigation>
