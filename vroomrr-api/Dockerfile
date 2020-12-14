@@ -6,7 +6,7 @@ MAINTAINER Luuk Esselbrugge V1.0
 ADD ./mysql-setup.sh /tmp/mysql-setup.sh
 #Add database sql file
 ADD ./database.sql /tmp/database.sql
-RUN /bin/sh /tmp/mysql-setup.sh
+RUN /bin/bash /tmp/mysql-setup.sh
 
 #Install Python3 and Flask API, configure test server service
 ADD ./flask-setup.sh /tmp/flask-setup.sh
