@@ -20,4 +20,13 @@
 
     <!-- General Strings -->
 
+    <!-- ImageView ContentDescription String -->
+    <string name="image_car">Image of the car</string>
+    <string name="name_car">Name of the car</string>
+    <string name="license_plate_car">License plate</string>
+    <string name="image_button">Image of delete icon</string>
+
+    <string name="image_chat">Image of chat</string>
+    <string name="text_chat">Text of chat</string>
+
 </resources>
