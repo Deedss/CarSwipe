@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.vroomrr.R;
 import com.example.vroomrr.ui.login.LoginViewModel;
@@ -20,10 +21,13 @@ public class CarFragment extends Fragment {
     private TextView textView;
     private View root;
 
+    private RecyclerView recyclerView;
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_car, container, false);
         carViewModel = new ViewModelProvider(this).get(CarViewModel.class);
         textView = root.findViewById(R.id.text_car);
+        recyclerView = root.findViewById(R.id.recyclerview);
 
         carViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
