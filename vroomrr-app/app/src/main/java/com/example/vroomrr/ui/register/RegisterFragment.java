@@ -22,14 +22,6 @@ public class RegisterFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_register, container, false);
         registerViewModel = new ViewModelProvider(this).get(RegisterViewModel.class);
-        textView = root.findViewById(R.id.text_register);
-
-        registerViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
 
         return root;
     }

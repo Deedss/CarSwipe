@@ -22,14 +22,13 @@ public class SwipeFragment extends Fragment {
     private View root;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        root = inflater.inflate(R.layout.fragment_swipe, container, false);
+        root = inflater.inflate(R.layout.fragment_register, container, false);
         swipeViewModel = new ViewModelProvider(this).get(SwipeViewModel.class);
-        textView = root.findViewById(R.id.text_swipe);
 
         swipeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
-                textView.setText(s);
+
             }
         });
 
