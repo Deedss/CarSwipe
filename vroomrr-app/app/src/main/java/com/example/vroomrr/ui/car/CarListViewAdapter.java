@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.vroomrr.Car;
 import com.example.vroomrr.R;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.CarListViewHolder>{
@@ -22,6 +23,12 @@ public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.
 
     public CarListViewAdapter(ArrayList<Car> cars) {
         this.cars = cars;
+
+        //temp To remove later on
+        cars.add(new Car("1","1", "1",0,0));
+        cars.add(new Car("2","2", "2",0,0));
+        cars.add(new Car("3","3", "3",0,0));
+        cars.add(new Car("4","4", "4",0,0));
     }
 
     @NonNull
@@ -39,13 +46,14 @@ public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.
             @Override
             public void onClick(View v) {
                 cars.remove(position);
+                notifyDataSetChanged();
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return cars.size();
     }
 
     public class CarListViewHolder extends RecyclerView.ViewHolder{
@@ -57,7 +65,6 @@ public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.
 
         public CarListViewHolder(@NonNull View itemView) {
             super(itemView);
-
             this.car_image = itemView.findViewById(R.id.car_image);
             this.car_name = itemView.findViewById(R.id.car_name);
             this.car_license = itemView.findViewById(R.id.car_license);

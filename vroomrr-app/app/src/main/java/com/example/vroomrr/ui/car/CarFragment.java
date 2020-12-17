@@ -24,25 +24,19 @@ import java.util.ArrayList;
 
 public class CarFragment extends Fragment {
     private CarViewModel carViewModel;
-    private TextView textView;
     private View root;
-
-    private ArrayList<Car> cars;
+    // Add RecyclerView member
+    private RecyclerView recyclerView;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.d("cars: ", "onCreateView: did it work?");
         root = inflater.inflate(R.layout.fragment_car, container, false);
         carViewModel = new ViewModelProvider(this).get(CarViewModel.class);
 
+        // Build RecyclerView and set Adapter
+        recyclerView = root.findViewById(R.id.car_recyclerview);
+        recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
+        recyclerView.setAdapter(new CarListViewAdapter(new ArrayList<Car>()));
+
         return root;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        RecyclerView recyclerView = view.findViewById(R.id.car_recyclerview);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new CarListViewAdapter(cars));
     }
 }
