@@ -1,46 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/mainLayout"
-    android:orientation="horizontal"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="80dp"
-    android:clickable="true"
-    android:focusable="true">
-
-    <ImageView
-        android:id="@+id/car_image"
-        android:layout_width="80dp"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/car_image" />
-
+    android:id="@+id/car_CardView"
+    >
     <LinearLayout
-        android:layout_width="0dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_weight="1">
+        android:clickable="true"
+        android:focusable="true">
 
-        <TextView
-            android:id="@+id/car_name"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:gravity="center"
-            android:text="@string/car_name"
-            />
+        <ImageView
+            android:id="@+id/car_image"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/car_image" />
 
-        <TextView
-            android:id="@+id/car_license"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:gravity="center"
-            android:text="@string/car_license" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/car_name"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:text="@string/car_name"
+                />
+
+            <TextView
+                android:id="@+id/car_license"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:text="@string/car_license" />
+
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/car_deletebtn"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/car_deletebtn"
+            android:src="@drawable/baseline_clear_black_18dp"/>
 
     </LinearLayout>
 
-    <ImageButton
-        android:id="@+id/car_deletebtn"
-        android:layout_width="60dp"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/car_deletebtn"
-        android:src="@drawable/baseline_clear_black_18dp"/>
-
-</LinearLayout>
+</androidx.cardview.widget.CardView>
