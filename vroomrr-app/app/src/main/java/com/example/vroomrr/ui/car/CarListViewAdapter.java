@@ -1,15 +1,19 @@
 package com.example.vroomrr.ui.car;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.DirectedAcyclicGraph;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.vroomrr.Car;
@@ -42,7 +46,7 @@ public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.
         holder.car_image.setImageResource(cars.get(position).getImageResource());
         holder.car_name.setText(cars.get(position).getName());
         holder.car_license.setText(cars.get(position).getLicense());
-        holder.car_deletebtn.setOnClickListener(new View.OnClickListener() {
+        holder.car_deletebtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 cars.remove(position);
