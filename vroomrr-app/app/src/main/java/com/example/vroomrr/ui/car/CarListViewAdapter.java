@@ -24,7 +24,7 @@ public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.
     public CarListViewAdapter(ArrayList<Car> cars) {
         this.cars = cars;
 
-        //temp To remove later on
+        //todo To remove later on
         cars.add(new Car("1","1", "1",0,0));
         cars.add(new Car("2","2", "2",0,0));
         cars.add(new Car("3","3", "3",0,0));

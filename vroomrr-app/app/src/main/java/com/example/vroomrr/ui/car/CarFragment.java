@@ -25,6 +25,7 @@ import java.util.ArrayList;
 public class CarFragment extends Fragment {
     private CarViewModel carViewModel;
     private View root;
+
     // Add RecyclerView member
     private RecyclerView recyclerView;
 

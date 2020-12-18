@@ -23,9 +23,9 @@ public class ChatListViewAdapter extends RecyclerView.Adapter<ChatListViewAdapte
     public ChatListViewAdapter(ArrayList<Chat> chats) {
         this.chats = chats;
 
-        //temp To remove later on
-        chats.add(new Chat(0, 1));
-        chats.add(new Chat(0, 2));
+        //todo To remove later on
+        chats.add(new Chat(0, "1"));
+        chats.add(new Chat(0, "2"));
     }
 
     @NonNull
@@ -48,7 +48,7 @@ public class ChatListViewAdapter extends RecyclerView.Adapter<ChatListViewAdapte
 
     @Override
     public int getItemCount() {
-        return 0;
+        return chats.size();
     }
 
     public class ChatListViewHolder extends RecyclerView.ViewHolder {

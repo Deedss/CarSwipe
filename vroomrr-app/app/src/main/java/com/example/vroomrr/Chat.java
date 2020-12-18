@@ -1,14 +1,17 @@
 package com.example.vroomrr;
 
+import java.util.ArrayList;
+
 public class Chat {
 
     private int chat_imageResource;
-    private int chatId;
+    private String chatId;
+    ArrayList<ChatMessage> messages;
 
     /**
      * Constructor
      */
-    public Chat(int chat_imageResource, int chatId) {
+    public Chat(int chat_imageResource, String chatId) {
         this.chat_imageResource = chat_imageResource;
         this.chatId = chatId;
     }
@@ -17,7 +20,7 @@ public class Chat {
         return chat_imageResource;
     }
 
-    public int getChatId() {
+    public String getChatId() {
         return chatId;
     }
 }
