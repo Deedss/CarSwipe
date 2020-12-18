@@ -11,26 +11,29 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.vroomrr.Car;
+import com.example.vroomrr.Chat;
 import com.example.vroomrr.R;
+import com.example.vroomrr.ui.car.CarListViewAdapter;
+
+import java.util.ArrayList;
 
 public class ChatFragment extends Fragment {
-
-    private ChatViewModel chatViewModel;
-    private TextView textView;
     private View root;
+
+    // Add RecyclerView member
+    private RecyclerView recyclerView;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_chat, container, false);
-        chatViewModel = new ViewModelProvider(this).get(ChatViewModel.class);
-        textView = root.findViewById(R.id.text_chat);
 
-        chatViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+        // Build RecyclerView and set Adapter
+        recyclerView = root.findViewById(R.id.chat_recyclerview);
+        recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
+        recyclerView.setAdapter(new ChatListViewAdapter(new ArrayList<Chat>()));
 
         return root;
     }
