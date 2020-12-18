@@ -22,8 +22,6 @@ import com.example.vroomrr.ui.car.CarListViewAdapter;
 import java.util.ArrayList;
 
 public class ChatFragment extends Fragment {
-
-    private ChatViewModel chatViewModel;
     private View root;
 
     // Add RecyclerView member
@@ -31,7 +29,6 @@ public class ChatFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_chat, container, false);
-        chatViewModel = new ViewModelProvider(this).get(ChatViewModel.class);
 
         // Build RecyclerView and set Adapter
         recyclerView = root.findViewById(R.id.chat_recyclerview);
