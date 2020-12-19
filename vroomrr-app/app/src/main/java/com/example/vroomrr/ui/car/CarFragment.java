@@ -1,34 +1,48 @@
 package com.example.vroomrr.ui.car;
 
 import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.vroomrr.Car;
 import com.example.vroomrr.R;
 
-import java.util.ArrayList;
-
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link CarFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
 public class CarFragment extends Fragment {
-    private View root;
+    private Car car;
 
-    // Add RecyclerView member
-    private RecyclerView recyclerView;
+    public CarFragment(Car car) {
+        this.car = car;
+    }
 
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        root = inflater.inflate(R.layout.fragment_car, container, false);
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.*
+     * @param car Parameter 1.
+     * @return A new instance of fragment CarFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static CarFragment newInstance(Car car) {
+        CarFragment fragment = new CarFragment(car);
+        return fragment;
+    }
 
-        // Build RecyclerView and set Adapter
-        recyclerView = root.findViewById(R.id.car_recyclerview);
-        recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
-        recyclerView.setAdapter(new CarListViewAdapter(new ArrayList<Car>()));
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
-        return root;
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_car, container, false);
     }
 }
