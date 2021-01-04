@@ -116,8 +116,7 @@ INSERT INTO `car` (`license_plate`, `user_id`, `brand`, `color`, `type`, `horsep
 INSERT INTO `car` (`license_plate`, `user_id`, `brand`, `color`, `type`, `horsepower`, `build_year`, `fuel_type`) VALUES ('97-uas-41', 'b78adaff-f2c3-30a9-8d62-01a04a29721e', ' Citroën', 'LightCyan', ' Malibu', 514, 1990, 'electrisch');
 INSERT INTO `car` (`license_plate`, `user_id`, `brand`, `color`, `type`, `horsepower`, `build_year`, `fuel_type`) VALUES ('98-mtp-80', '083c4714-07bc-31ec-bf31-62fcbc10c4ec', ' Aston Martin', 'DimGray', ' Windstar', 201, 1975, 'diesel');
 INSERT INTO `car` (`license_plate`, `user_id`, `brand`, `color`, `type`, `horsepower`, `build_year`, `fuel_type`) VALUES ('99-fho-31', '2c06f9e8-e621-38a4-913c-011ac4b66075', ' Nissan', 'Chartreuse', ' Escalade EXT', 285, 1988, 'lpg');
-
-
+INSERT INTO `car` (`license_plate`, `user_id`, `brand`, `color`, `type`, `horsepower`, `build_year`, `fuel_type`) VALUES ('49jfgv', '47b6b871-26ce-43f3-9dc0-17a6ccb0505a', ' Volvo', 'Black', ' S60', 140, 2002, 'benzine');
 #
 # TABLE STRUCTURE FOR: car_images
 #
@@ -299,8 +298,7 @@ INSERT INTO `user` (`user_id`, `username`, `name`, `password`, `public_key`) VAL
 INSERT INTO `user` (`user_id`, `username`, `name`, `password`, `public_key`) VALUES ('fc3ea413-1e18-3abf-8ad4-f89379297503', 'damian59', 'Kurt', '853c810cd9e7a7c7a35fc2b66a106e6bdaf26ae3', '');
 INSERT INTO `user` (`user_id`, `username`, `name`, `password`, `public_key`) VALUES ('fda886fd-9683-3cf5-9604-7ef2fb2068e2', 'roxanne67', 'Terrance', '43dbf3b2d1bfc532ba4a07463a01953bf3e9da77', '');
 INSERT INTO `user` (`user_id`, `username`, `name`, `password`, `public_key`) VALUES ('ff5a5be3-12a5-3a2a-bb3c-6b967b886207', 'trisha13', 'Ruth', 'd655c4d04bfb00363599a751a052f61bc0e56203', '');
-
-
+INSERT INTO `user` (`user_id`, `username`, `name`, `password`, `public_key`) VALUES ('47b6b871-26ce-43f3-9dc0-17a6ccb0505a', 'luuk', 'Luuk Esselbrugge', '0f52c4659c484a859996e4e3dce7c32b1d9b04085ae517b6da19a3bca3b262b1', 'KEY');
 #
 # TABLE STRUCTURE FOR: user_matches
 #
