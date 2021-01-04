@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.CookieHandler;
 import java.net.CookieManager;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.KeyStore;
@@ -46,7 +47,7 @@ final public class ServerConnection {
      * @param context the context
      * @return returns the string value of result
      */
-    private String httpsGET(String file, SSLContext context){
+    private String httpsGET(String file, Context context){
         StringBuffer data = new StringBuffer();
 
         // Setup SSL socket and TrustManager
@@ -57,7 +58,7 @@ final public class ServerConnection {
 
             // Setup HTTPS connection
             URL url = new URL(master_server + file);
-            HttpsURLConnection connection = (HttpsURLConnection)url.openConnection();
+            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 
 
         } catch (MalformedURLException e) {
@@ -67,49 +68,25 @@ final public class ServerConnection {
         }
 
         String result = "";
-        
-        /// TODO: 11-12-20 Fill in return 
+
+        /// TODO: 11-12-20 Fill in return
         return result;
 
     }
 
     /**
-     * This function serves to utilize the certificate defined by the project group or the HTTPS
-     * connection.
-     * @param context SSLContext
-     * @return Returns a SSLContext
-     * @throws Exception Can throw exception such as Certificate and IOException.
+     * POST function for sending data to the flask webserver.
+     * @param file the file/request to send
+     * @param context the context
+     * @return returns the string value of result
      */
-    private SSLContext setupCertificate(SSLContext context) throws Exception {
-        // Load CAs from an InputStream
-        // (could be from a resource or ByteArrayInputStream or ...)
-        CertificateFactory cf = CertificateFactory.getInstance("X.509");
-        // From https://www.washington.edu/itconnect/security/ca/load-der.crt
-        InputStream caInput = new BufferedInputStream(new FileInputStream("load-der.crt"));
-        Certificate ca;
-        try {
-            ca = cf.generateCertificate(caInput);
-            System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
-        } finally {
-            caInput.close();
-        }
+    private String HttpsPOST(String file, Context context) {
+        StringBuffer data = new StringBuffer();
 
-        // Create a KeyStore containing our trusted CAs
-        String keyStoreType = KeyStore.getDefaultType();
-        KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-        keyStore.load(null, null);
-        keyStore.setCertificateEntry("ca", ca);
+        String result = "";
 
-        // Create a TrustManager that trusts the CAs in our KeyStore
-        String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-        tmf.init(keyStore);
-
-        // Create an SSLContext that uses our TrustManager
-        context = SSLContext.getInstance("TLS");
-        context.init(null, tmf.getTrustManagers(), null);
-
-        return context;
+        /// TODO: 11-12-20 Fill in return
+        return result;
     }
 
     /**
