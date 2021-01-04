@@ -28,5 +28,7 @@
 
     <string name="image_chat">Image of chat</string>
     <string name="text_chat">Text of chat</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
