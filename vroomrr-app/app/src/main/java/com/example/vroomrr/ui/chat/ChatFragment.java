@@ -15,22 +15,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.vroomrr.R;
 
 public class ChatFragment extends Fragment {
-
-    private ChatViewModel chatViewModel;
-    private TextView textView;
     private View root;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_chat, container, false);
-        chatViewModel = new ViewModelProvider(this).get(ChatViewModel.class);
-        textView = root.findViewById(R.id.text_chat);
-
-        chatViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
 
         return root;
     }
