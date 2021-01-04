@@ -96,7 +96,7 @@ CREATE TABLE `opinion` (
 
 CREATE TABLE `session` (
   `session_id` varchar(64) NOT NULL,
-  `user_id` int(64) NOT NULL,
+  `user_id` varchar(64) NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
