@@ -37,8 +37,9 @@ CREATE TABLE `car` (
   `horsepower` int(8) NOT NULL,
   `build_year` int(8) NOT NULL,
   `fuel_type` enum('benzine','diesel','lpg','elektriciteit') NOT NULL,
-  `description` varchar(1024) NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `description` varchar(1024) NULL,
+  `selected` BOOLEAN NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -50,7 +51,7 @@ CREATE TABLE `car_images` (
   `car_images_id` varchar(64) NOT NULL,
   `license_plate` varchar(16) NOT NULL,
   `image` varchar(2048) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -61,7 +62,7 @@ CREATE TABLE `car_images` (
 CREATE TABLE `chat` (
   `chat_id` varchar(64) NOT NULL,
   `start` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -75,7 +76,7 @@ CREATE TABLE `message` (
   `user_id` varchar(64) NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `content` varchar(1028) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -87,7 +88,7 @@ CREATE TABLE `opinion` (
   `user_id` varchar(64) NOT NULL,
   `user_id_match` varchar(64) NOT NULL,
   `opinion` enum('green','yellow','red','') NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -99,7 +100,7 @@ CREATE TABLE `session` (
   `session_id` varchar(64) NOT NULL,
   `user_id` varchar(64) NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -113,7 +114,7 @@ CREATE TABLE `user` (
   `name` varchar(64) NOT NULL,
   `password` varchar(64) NOT NULL,
   `public_key` varchar(1028) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -125,7 +126,7 @@ CREATE TABLE `user_matches` (
   `chat_id` varchar(64) NOT NULL,
   `user_id_first` varchar(64) NOT NULL,
   `user_id_second` varchar(64) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Indexes for dumped tables
