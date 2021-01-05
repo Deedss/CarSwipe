@@ -10,15 +10,17 @@ class Car(db.Model):
 	brand: str
 	color: str
 	type: str
-	horse_power: int
+	horsepower: int
 	build_year: int
-	fuel_type: enum
+	fuel_type: str
+    description: str
     
-    license_plate = db.Column(db.String(16), primary_key=True)
+	license_plate = db.Column(db.String(16), primary_key=True)
 	user_id = db.Column(db.String(64), unique=True)
 	brand = db.Column(db.String(64))
 	color = db.Column(db.String(64))
 	type = db.Column(db.String(64))
-	horse_power = db.Column(db.int(8))
-	build_year = db.Column(db.int(8))
-	fuel_type = db.Column(db.enum(8))
+	horsepower = db.Column(db.Integer)
+	build_year = db.Column(db.Integer)
+	fuel_type = db.Column(db.String(16))
+	description = db.Column(db.String(1024))

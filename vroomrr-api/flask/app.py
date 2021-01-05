@@ -1,8 +1,11 @@
 from flask import Flask, jsonify, request
 from model.user import User
 from model.session import Session
+from model.car import Car
 
 from ext import db
+from rdw import RDW
+
 import uuid, hashlib
 
 app = Flask(__name__)
@@ -40,7 +43,8 @@ def login():
 		return jsonify(session)
 	else:
 		return jsonify({ "error" : "Wrong username or password"}), 403 
-		
+
+#Returns user profile using UID		
 @app.route('/user/<id>')
 def getUser(id):
 	#Check session is valid
@@ -54,6 +58,79 @@ def getUser(id):
 		return jsonify(user)
 	else:
 		return jsonify({ "error" : "Session has expired or does not exist"}), 403
+		
+#Returns all cars for specific UID		
+@app.route('/cars/<id>')
+def getCars(id):
+	#Check session is valid
+	if checkSession(request):
+		cars = Car.query.filter_by(user_id=id).all()
+		return jsonify(cars)
+	else:
+		return jsonify({ "error" : "Session has expired or does not exist"}), 403
+
+#Add car based on license plate
+@app.route('/cars/add/<kenteken>')
+def addCar(kenteken):
+	#Check session is valid
+	user = checkSession(request)
+	if user:
+		car = RDW().getVehicle(kenteken)
+		car_fuel = RDW().getVehicleFuel(kenteken)
+		if car:
+			newcar = Car()
+			newcar.license_plate = car['kenteken']
+			newcar.brand = car['merk']
+			newcar.build_year = car['datum_eerste_afgifte_nederland']
+			newcar.color = car['eerste_kleur']
+			newcar.fuel_type = car_fuel['brandstof_omschrijving']
+			
+			#convert KW to HP
+			if 'nettomaximumvermogen' in car_fuel:
+				newcar.horsepower = int(float(car_fuel['nettomaximumvermogen']) * 1.3410220924)
+			#Check if electric car
+			if 'netto_max_vermogen_elektrisch' in car_fuel:
+				newcar.horsepower = int(float(car_fuel['netto_max_vermogen_elektrisch']) * 1.3410220924)
+			
+			newcar.type = car['handelsbenaming']
+			newcar.user_id = user.user_id
+			
+			db.session.add(newcar)
+			db.session.commit()
+			return jsonify(newcar)
+	else:
+		return jsonify({ "error" : "Session has expired or does not exist"}), 403
+		
+#Update car information for current session user	
+@app.route('/cars/update', methods=['POST'])
+def updateCar():
+	car = Car.from_dict(request.json)
+	if car.brand == "" or car.build_year == "" or car.color == "" or car.fuel_type == "" or car.horsepower == "" or car.type == "":
+		return jsonify({ "error" : "brand, year, color, fueltype, horsepower or car type cannot be empty"}), 400
+	#Check session is valid
+	user = checkSession(request)
+	if user:
+		#Check if car exists
+		tmpcar = Car.query.filter_by(license_plate=car.license_plate).first()
+		if not tmpcar:
+			return jsonify({ "error" : "Car not found"}), 403  
+		#Make sure user has owns this car	
+		if user.user_id == tmpcar.user_id:
+		
+			update = Car.query.filter_by(license_plate=car.license_plate).update({Car.brand: car.brand, 
+			Car.build_year: car.build_year, Car.color: car.color, 
+			Car.fuel_type: car.fuel_type, Car.horsepower: car.horsepower, Car.type: car.type})
+			db.session.commit()
+			
+			if update:
+				return jsonify(Car.query.filter_by(license_plate=car.license_plate).first())
+			else:
+				return jsonify({ "error" : "Update failed"}), 403 
+				
+		else:
+			return jsonify({ "error" : "Insufficient rights you do not own this car"}), 403
+	else:
+		return jsonify({ "error" : "Session has expired"}), 403
 	
 def checkSession(req):
 	session = Session.query.filter_by(session_id=req.headers['Session-Id']).first()

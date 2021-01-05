@@ -36,7 +36,8 @@ CREATE TABLE `car` (
   `type` varchar(64) NOT NULL,
   `horsepower` int(8) NOT NULL,
   `build_year` int(8) NOT NULL,
-  `fuel_type` enum('benzine','diesel','lpg','electrisch') NOT NULL
+  `fuel_type` enum('benzine','diesel','lpg','elektriciteit') NOT NULL,
+  `description` varchar(1024) NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
