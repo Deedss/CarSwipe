@@ -27,6 +27,13 @@ public class MainActivity extends AppCompatActivity {
 
         setupToolbar();
         setupNavigationDrawer();
+
+        // TODO to move to login
+        try {
+            Cryptography.generateKeyPair();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
