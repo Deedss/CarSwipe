@@ -1,6 +1,7 @@
 package com.example.vroomrr.ui.login;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,10 +10,13 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.vroomrr.Cryptography;
 import com.example.vroomrr.R;
+import com.example.vroomrr.ServerCallback;
+import com.example.vroomrr.ServerConnection;
 
-public class LoginFragment extends Fragment {
+import org.json.JSONObject;
+
+public class LoginFragment extends Fragment implements ServerCallback {
     private View root;
     private Button btn;
 
@@ -37,5 +41,10 @@ public class LoginFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void completionHandler(Boolean success, JSONObject object) {
+
     }
 }

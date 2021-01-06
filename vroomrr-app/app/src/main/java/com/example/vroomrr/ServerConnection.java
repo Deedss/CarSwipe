@@ -1,32 +1,23 @@
 package com.example.vroomrr;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.Log;
+import android.os.AsyncTask;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.content.Context.MODE_PRIVATE;
-
 final public class ServerConnection {
-    // URL information for Server Connections
-    private final String user_agent = "";
-    //todo Add official master_server
-//    private final String master_server = "grolink.nl/Vroomrr/";
-    private final String master_server = "localhost:5000";
-
     // Cookies handler
     private final CookieManager cookieManager;
 
@@ -37,82 +28,6 @@ final public class ServerConnection {
         cookieManager = new CookieManager();
         CookieHandler.setDefault(cookieManager);
     }
-
-//    public String httpGET(String file, Context context){
-//
-//        StringBuffer data = new StringBuffer("");
-//
-//        try{
-//            SharedPreferences SP = context.getSharedPreferences("Cookies", MODE_PRIVATE);
-//            String cookie = SP.getString("Cookie","");
-//
-//            URL url = new URL(master_server + file);
-//            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-//            connection.setRequestProperty("User-Agent", user_agent);
-//            connection.setRequestProperty("Cookie", cookie);
-//            connection.setRequestMethod("GET");
-//            connection.connect();
-//
-//            InputStream inputStream = connection.getInputStream();
-//
-//            BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
-//            String line = "";
-//            while ((line = rd.readLine()) != null) {
-//                data.append(line);
-//            }
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        try{
-//            final SharedPreferences.Editor SP = context.getSharedPreferences("WebCache", MODE_PRIVATE).edit();
-//            SP.putString(file, data.toString());
-//            SP.apply();
-//
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-//
-//        return data.toString();
-//    }
-
-    private String httpPOST(String urlIn, String urlParameters, Context context){
-
-        StringBuffer data = new StringBuffer("");
-
-        byte[] postData       = urlParameters.getBytes( StandardCharsets.UTF_8 );
-        int    postDataLength = postData.length;
-        try{
-
-            URL url = new URL(urlIn);
-            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty( "Content-Type", "application/x-www-form-urlencoded");
-            connection.setDoOutput(true);
-            connection.setRequestProperty("User-Agent", user_agent);
-            connection.setRequestProperty( "Content-Length", Integer.toString( postDataLength ));
-            connection.setRequestProperty( "Accept", "*/*");
-            try( DataOutputStream wr = new DataOutputStream( connection.getOutputStream())) {
-                wr.write( postData );
-            }
-
-            InputStream inputStream = connection.getInputStream();
-
-            BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
-            String line = "";
-            while ((line = rd.readLine()) != null) {
-                data.append(line);
-            }
-
-        } catch (IOException e) {
-            // writing exception to log
-            Log.d("Error",e.toString());
-        }
-
-        return data.toString();
-    }
-
 
     /**
      * Returns user information from the server.
@@ -134,6 +49,11 @@ final public class ServerConnection {
 
     }
 
+    public static void login(String username, String password, ServerCallback callback){
+        String jsonBody = "{ username: \"" + username + "\", password: \"" + password + "\" }";
+        ServerConnection.PostNoSessionAsync task = new ServerConnection.PostNoSessionAsync(jsonBody, callback);
+        task.execute("login");
+    }
 
     /**
      * returns an arraylist with all chats specific to the user.
@@ -225,4 +145,66 @@ final public class ServerConnection {
 
         return publicKey;
     }
+
+    public static class PostNoSessionAsync extends AsyncTask<String, Void, Void> {
+        JSONObject postData;
+        ServerCallback callback;
+
+        // URL information for Server Connections
+        private final String user_agent = "Mozilla/5.0";
+        //todo Add official master_server
+//    private final String master_server = "grolink.nl/Vroomrr/";
+        private final String master_server = "http://10.0.2.2:5000/";
+
+        // This is a constructor that allows you to pass in the JSON body
+        public PostNoSessionAsync(String postData, ServerCallback callback) {
+            if (postData != null) {
+                try {
+                    this.postData = new JSONObject(postData);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                this.callback = callback;
+            }
+        }
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            StringBuffer data = new StringBuffer("");
+
+            try {
+                // Setup URL connection.
+                String newUrl = master_server + strings[0];
+                URL url = new URL(newUrl);
+                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("Content-Type", "application/json; utf-8");
+                connection.setRequestProperty("Accept", "application/json");
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+
+                // Try to write to server.
+                try( OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream())) {
+                    wr.write(postData.toString());
+                    wr.flush();
+                }
+
+                // Check on successful response
+                if(connection.getResponseCode() == 200) {
+                    InputStream inputStream = connection.getInputStream();
+                    BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
+                    String line = "";
+                    while ((line = rd.readLine()) != null) {
+                        data.append(line);
+                    }
+                    // Do the callback
+                    callback.completionHandler(true, new JSONObject(String.valueOf(data)));
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
 }
