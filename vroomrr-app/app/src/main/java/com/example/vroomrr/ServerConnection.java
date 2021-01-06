@@ -38,44 +38,44 @@ final public class ServerConnection {
         CookieHandler.setDefault(cookieManager);
     }
 
-    public String httpGET(String file, Context context){
-
-        StringBuffer data = new StringBuffer("");
-
-        try{
-            SharedPreferences SP = context.getSharedPreferences("Cookies", MODE_PRIVATE);
-            String cookie = SP.getString("Cookie","");
-
-            URL url = new URL(master_server + file);
-            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-            connection.setRequestProperty("User-Agent", user_agent);
-            connection.setRequestProperty("Cookie", cookie);
-            connection.setRequestMethod("GET");
-            connection.connect();
-
-            InputStream inputStream = connection.getInputStream();
-
-            BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
-            String line = "";
-            while ((line = rd.readLine()) != null) {
-                data.append(line);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try{
-            final SharedPreferences.Editor SP = context.getSharedPreferences("WebCache", MODE_PRIVATE).edit();
-            SP.putString(file, data.toString());
-            SP.apply();
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return data.toString();
-    }
+//    public String httpGET(String file, Context context){
+//
+//        StringBuffer data = new StringBuffer("");
+//
+//        try{
+//            SharedPreferences SP = context.getSharedPreferences("Cookies", MODE_PRIVATE);
+//            String cookie = SP.getString("Cookie","");
+//
+//            URL url = new URL(master_server + file);
+//            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+//            connection.setRequestProperty("User-Agent", user_agent);
+//            connection.setRequestProperty("Cookie", cookie);
+//            connection.setRequestMethod("GET");
+//            connection.connect();
+//
+//            InputStream inputStream = connection.getInputStream();
+//
+//            BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
+//            String line = "";
+//            while ((line = rd.readLine()) != null) {
+//                data.append(line);
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        try{
+//            final SharedPreferences.Editor SP = context.getSharedPreferences("WebCache", MODE_PRIVATE).edit();
+//            SP.putString(file, data.toString());
+//            SP.apply();
+//
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//
+//        return data.toString();
+//    }
 
     private String httpPOST(String urlIn, String urlParameters, Context context){
 
@@ -96,16 +96,6 @@ final public class ServerConnection {
             try( DataOutputStream wr = new DataOutputStream( connection.getOutputStream())) {
                 wr.write( postData );
             }
-            //Like waarom in de fuck is dit een ding
-
-            //if(connection.getResponseCode() == 307){
-            try {
-                String redirect = connection.getHeaderField("Location");
-                Log.e("Redirect Detected", redirect);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-            //}
 
             InputStream inputStream = connection.getInputStream();
 
@@ -189,9 +179,6 @@ final public class ServerConnection {
      */
     public Car getCar(String licenseplate) {
         Car car = null;
-
-        /// TODO: 11-12-20 Strip licenseplate string
-        licenseplate.replaceAll("-", "");
 
         return car;
     }
