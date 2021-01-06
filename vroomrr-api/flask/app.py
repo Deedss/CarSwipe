@@ -36,7 +36,7 @@ def login():
     tmpuser = User.from_dict(request.json)
     user = User.query.filter_by(username=tmpuser.username).first()
     # Check if user exists
-    if user == None:
+    if user is None:
         return jsonify({"error": "Wrong username or password"}), 403
     # Check user password
     if user.password == hashlib.sha256((user.user_id + tmpuser.password).encode('utf-8')).hexdigest():
@@ -56,7 +56,7 @@ def getUser(id):
     if checkSession(request):
         user = User.query.filter_by(user_id=id).first()
         # Check if user exists
-        if user == None:
+        if user is None:
             return jsonify({"error": "This user does not exist"}), 404
         # Remove hashed password from output
         user.password = ''
@@ -98,9 +98,9 @@ def addCar(kenteken):
             newcar.selected = False
             newcar.type = car['handelsbenaming']
             newcar.user_id = user.user_id
-            newcar.description = Wikimedia().getDescription(car['merk'] + ' ' + car['handelsbenaming'])
-
-            # convert KW to HP
+            #             newcar.description = Wikimedia().getDescription(car['merk'] + ' ' + car['handelsbenaming'])
+            #
+            #             # convert KW to HP
             if 'nettomaximumvermogen' in car_fuel:
                 newcar.horsepower = int(float(car_fuel['nettomaximumvermogen']) * 1.3410220924)
             # Check if electric car
@@ -223,7 +223,7 @@ def getCarImages():
 
 def checkSession(req):
     session = Session.query.filter_by(session_id=req.headers['Session-Id']).first()
-    if session == None:
+    if session is None:
         return False
     else:
         return session
