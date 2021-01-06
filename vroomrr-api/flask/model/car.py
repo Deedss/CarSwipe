@@ -13,8 +13,9 @@ class Car(db.Model):
 	horsepower: int
 	build_year: int
 	fuel_type: str
-    description: str
-    
+	description: str
+	selected: bool
+
 	license_plate = db.Column(db.String(16), primary_key=True)
 	user_id = db.Column(db.String(64), unique=True)
 	brand = db.Column(db.String(64))
@@ -24,3 +25,4 @@ class Car(db.Model):
 	build_year = db.Column(db.Integer)
 	fuel_type = db.Column(db.String(16))
 	description = db.Column(db.String(1024))
+	selected = db.Column(db.Boolean)

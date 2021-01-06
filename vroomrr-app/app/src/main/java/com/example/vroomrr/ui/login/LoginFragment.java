@@ -9,6 +9,7 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.vroomrr.Cryptography;
 import com.example.vroomrr.R;
 
 public class LoginFragment extends Fragment {
@@ -22,6 +23,7 @@ public class LoginFragment extends Fragment {
         setOnclickListeners();
 
         return root;
+
     }
 
     public void setupView() {
