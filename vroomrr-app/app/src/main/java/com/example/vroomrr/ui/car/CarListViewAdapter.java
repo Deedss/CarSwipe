@@ -65,7 +65,7 @@ public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.
     }
 
     private void openCar(int adapterPosition) {
-        CarFragment fragment = new CarFragment(cars.get(adapterPosition));
+//        CarFragment fragment = new CarFragment(cars.get(adapterPosition));
 //        FragmentTransaction transaction = beginTransaction();
 //        transaction.replace(R.id.car_viewCar, fragment);
 //        transaction.addToBackStack(null);
