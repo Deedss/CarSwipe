@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.provider.Settings;
 
 import com.google.gson.Gson;
 
@@ -183,7 +184,7 @@ final public class ServerConnection {
             StringBuffer data = new StringBuffer("");
 
             try {
-                SharedPreferences SP = activity.getSharedPreferences("SessionID", Context.MODE_PRIVATE);
+                SharedPreferences SP = GlobalApplication.getEncryptedSharedPreferences();
 
                 // Setup URL connection.
                 String newUrl = master_server + strings[0] + "/" + postData;
@@ -244,7 +245,7 @@ final public class ServerConnection {
             StringBuffer data = new StringBuffer("");
 
             try {
-                SharedPreferences SP = activity.getSharedPreferences("SessionID", Context.MODE_PRIVATE);
+                SharedPreferences SP = GlobalApplication.getEncryptedSharedPreferences();
 
                 // Setup URL connection.
                 String newUrl = master_server + strings[0];

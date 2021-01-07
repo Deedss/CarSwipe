@@ -2,6 +2,7 @@ package com.example.vroomrr;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
@@ -28,12 +29,13 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 7;
     private AppBarConfiguration mAppBarConfiguration;
+    private SharedPreferences prf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        prf = GlobalApplication.getEncryptedSharedPreferences();
         setupToolbar();
         setupNavigationDrawer();
 
