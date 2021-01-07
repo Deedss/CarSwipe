@@ -98,9 +98,8 @@ def addCar(kenteken):
             newcar.selected = False
             newcar.type = car['handelsbenaming']
             newcar.user_id = user.user_id
-            #             newcar.description = Wikimedia().getDescription(car['merk'] + ' ' + car['handelsbenaming'])
-            #
-            #             # convert KW to HP
+			newcar.description = Wikimedia().getDescription(car['merk'] + ' ' + car['handelsbenaming'])
+            # convert KW to HP
             if 'nettomaximumvermogen' in car_fuel:
                 newcar.horsepower = int(float(car_fuel['nettomaximumvermogen']) * 1.3410220924)
             # Check if electric car
