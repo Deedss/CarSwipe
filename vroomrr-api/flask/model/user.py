@@ -2,6 +2,9 @@ from ext import db
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 
+from model.car import Car
+
+
 @dataclass_json
 @dataclass
 class User(db.Model):
@@ -10,7 +13,7 @@ class User(db.Model):
 	name: str
 	password: str
 	public_key: str
-    
+
 	user_id = db.Column(db.String(64), primary_key=True)
 	username = db.Column(db.String(64), unique=True)
 	name = db.Column(db.String(64))

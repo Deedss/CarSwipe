@@ -10,7 +10,7 @@ class Message(db.Model):
 	user_id: str
 	time: str
 	content: str
-    
+
 	messageid = db.Column(db.String(64), primary_key=True)
 	chat_id = db.Column(db.String(64), unique=True)
 	user_id = db.Column(db.String(64), unique=True)

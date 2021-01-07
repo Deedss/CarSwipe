@@ -42,6 +42,21 @@ CREATE TABLE `car` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
+--
+-- Table structure for table `filter`
+--
+
+CREATE TABLE `filter` (
+  `user_id` varchar(64) NOT NULL,
+  `build_year_min` int(8) NOT NULL,
+  `build_year_max` int(8) NOT NULL,
+  `horsepower_min` int(8) NOT NULL,
+  `fuel_types` varchar(1024) NOT NULL,
+  `colors` varchar(1024) NOT NULL,
+  `brands` varchar(1024) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `car_images`
