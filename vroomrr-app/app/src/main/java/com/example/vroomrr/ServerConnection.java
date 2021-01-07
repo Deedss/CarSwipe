@@ -1,7 +1,12 @@
 package com.example.vroomrr;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,8 +56,9 @@ final public class ServerConnection {
 
     }
 
-    public static void login(JSONObject json, ServerCallback callback, Activity activity){
-        PostAsync task = new PostAsync(json, callback, activity);
+    public static void login(User user, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(gson.toJson(user), callback, activity);
         task.execute("login");
     }
 
@@ -104,6 +110,12 @@ final public class ServerConnection {
         return car;
     }
 
+    public static void addCar(String licenseplate, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        GetAsync task = new GetAsync(licenseplate, callback, activity);
+        task.execute("cars/add/");
+    }
+
     /**
      * Update info on specific car
      *
@@ -148,17 +160,17 @@ final public class ServerConnection {
     }
 
     public static class GetAsync extends AsyncTask<String, Void, Void> {
-        JSONObject postData;
+        String postData;
         ServerCallback callback;
         Activity activity;
 
         // URL information for Server Connections
         //todo Add official master_server
-//    private final String master_server = "grolink.nl/Vroomrr/";
+//    private final String master_server = "https://grolink.nl/";
         private final String master_server = "http://10.0.2.2:5000/";
 
         // This is a constructor that allows you to pass in the JSON body
-        public GetAsync(JSONObject postData, ServerCallback callback, Activity activity) {
+        public GetAsync(String postData, ServerCallback callback, Activity activity) {
             if (postData != null) {
                 this.postData = postData;
                 this.callback = callback;
@@ -171,43 +183,35 @@ final public class ServerConnection {
             StringBuffer data = new StringBuffer("");
 
             try {
+                SharedPreferences SP = activity.getSharedPreferences("SessionID", Context.MODE_PRIVATE);
+
                 // Setup URL connection.
-                String newUrl = master_server + strings[0];
+                String newUrl = master_server + strings[0] + "/" + postData;
                 URL url = new URL(newUrl);
                 HttpURLConnection connection = (HttpURLConnection)url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setRequestProperty("Content-Type", "application/json; utf-8");
-                connection.setRequestProperty("Accept", "application/json");
-                connection.setDoInput(true);
-                connection.setDoOutput(true);
+                connection.setRequestProperty("session_id", SP.getString("SessionID",""));
+                connection.connect();
 
-                //todo Check if SessionId in SharedPreferences
-                connection.setRequestProperty("session_id", "");
+                InputStream inputStream = connection.getInputStream();
 
-                // Try to write to server.
-                try( OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream())) {
-                    wr.write(postData.toString());
-                    wr.flush();
+                BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
+                String line = "";
+                while ((line = rd.readLine()) != null) {
+                    data.append(line);
                 }
 
-                // Check on successful response
-                if(connection.getResponseCode() == 200) {
-                    InputStream inputStream = connection.getInputStream();
-                    BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
-                    String line = "";
-                    while ((line = rd.readLine()) != null) {
-                        data.append(line);
+                final String returnData = data.toString();
+
+                System.out.println(returnData);
+                // Do the callback
+                activity.runOnUiThread(new Runnable() {
+                    public void run(){
+                        callback.completionHandler(true, returnData);
                     }
+                });
 
-                    final StringBuffer returnData = data;
-
-                    // Do the callback
-                    activity.runOnUiThread(new Runnable() {
-                        public void run(){
-                            callback.completionHandler(true, returnData);
-                        }
-                    });
-                }
             } catch (Exception e){
                 e.printStackTrace();
             }
@@ -216,17 +220,18 @@ final public class ServerConnection {
     }
 
     public static class PostAsync extends AsyncTask<String, Void, Void> {
-        JSONObject postData;
+        String postData;
         ServerCallback callback;
+        @SuppressLint("StaticFieldLeak")
         Activity activity;
 
         // URL information for Server Connections
         //todo Add official master_server
-//    private final String master_server = "grolink.nl/Vroomrr/";
+//    private final String master_server = "https://grolink.nl/";
         private final String master_server = "http://10.0.2.2:5000/";
 
         // This is a constructor that allows you to pass in the JSON body
-        public PostAsync(JSONObject postData, ServerCallback callback, Activity activity) {
+        public PostAsync(String postData, ServerCallback callback, Activity activity) {
             if (postData != null) {
                 this.postData = postData;
                 this.callback = callback;
@@ -239,6 +244,8 @@ final public class ServerConnection {
             StringBuffer data = new StringBuffer("");
 
             try {
+                SharedPreferences SP = activity.getSharedPreferences("SessionID", Context.MODE_PRIVATE);
+
                 // Setup URL connection.
                 String newUrl = master_server + strings[0];
                 URL url = new URL(newUrl);
@@ -248,34 +255,32 @@ final public class ServerConnection {
                 connection.setRequestProperty("Accept", "application/json");
                 connection.setDoInput(true);
                 connection.setDoOutput(true);
-
-                //todo Check if SessionId in SharedPreferences
-                connection.setRequestProperty("session_id", "");
-
+                if(SP.contains("SessionID")){
+                    connection.setRequestProperty("session_id", SP.getString("SessionID", ""));
+                }
                 // Try to write to server.
                 try( OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream())) {
-                    wr.write(postData.toString());
+                    wr.write(postData);
                     wr.flush();
                 }
 
                 // Check on successful response
-                if(connection.getResponseCode() == 200) {
-                    InputStream inputStream = connection.getInputStream();
-                    BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
-                    String line = "";
-                    while ((line = rd.readLine()) != null) {
-                        data.append(line);
-                    }
-
-                    final StringBuffer returnData = data;
-
-                    // Do the callback
-                    activity.runOnUiThread(new Runnable() {
-                        public void run(){
-                            callback.completionHandler(true, returnData);
-                        }
-                    });
+                InputStream inputStream = connection.getInputStream();
+                BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
+                String line = "";
+                while ((line = rd.readLine()) != null) {
+                    data.append(line);
                 }
+
+                final String returnData = data.toString();
+
+                // Do the callback
+                activity.runOnUiThread(new Runnable() {
+                    public void run(){
+                        callback.completionHandler(true, returnData);
+                    }
+                });
+
             } catch (Exception e){
                 e.printStackTrace();
             }

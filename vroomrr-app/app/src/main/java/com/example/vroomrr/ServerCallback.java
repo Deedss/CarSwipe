@@ -3,5 +3,5 @@ package com.example.vroomrr;
 import org.json.JSONObject;
 
 public interface ServerCallback {
-    void completionHandler(Boolean success, Object object);
+    void completionHandler(Boolean success, String object);
 }
