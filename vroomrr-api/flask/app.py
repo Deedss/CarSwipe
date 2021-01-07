@@ -105,7 +105,7 @@ def getCandidates():
 
 # Get session user filter used for match candidates
 @app.route('/candidates/filter')
-def getUserFilter():
+def getCandidatesFilter():
 	user = checkSession(request)
 	if user:
 		# Check if filter rules exists for user
@@ -120,7 +120,7 @@ def getUserFilter():
 
 # Update filter information for current session user
 @app.route('/candidates/filter/update', methods=['POST'])
-def updateFilter():
+def updateCandidatesFilter():
 	n_filter = Filter.from_dict(request.json)
 	if n_filter.build_year_max == "" or n_filter.build_year_min == "" or n_filter.horsepower_min == "":
 		return jsonify(
@@ -138,6 +138,7 @@ def updateFilter():
 		return jsonify(Filter.query.filter_by(user_id=user.user_id).first())
 	else:
 		return jsonify({"error": "Session has expired or does not exist"})
+
 
 # Returns all cars for specific UID
 @app.route('/cars', methods=['POST'])
