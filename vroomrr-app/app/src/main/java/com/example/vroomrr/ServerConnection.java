@@ -1,7 +1,9 @@
 package com.example.vroomrr;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -49,9 +51,8 @@ final public class ServerConnection {
 
     }
 
-    public static void login(String username, String password, ServerCallback callback){
-        String jsonBody = "{ username: \"" + username + "\", password: \"" + password + "\" }";
-        ServerConnection.PostNoSessionAsync task = new ServerConnection.PostNoSessionAsync(jsonBody, callback);
+    public static void login(JSONObject json, ServerCallback callback, Activity activity){
+        PostAsync task = new PostAsync(json, callback, activity);
         task.execute("login");
     }
 
@@ -146,25 +147,90 @@ final public class ServerConnection {
         return publicKey;
     }
 
-    public static class PostNoSessionAsync extends AsyncTask<String, Void, Void> {
+    public static class GetAsync extends AsyncTask<String, Void, Void> {
         JSONObject postData;
         ServerCallback callback;
+        Activity activity;
 
         // URL information for Server Connections
-        private final String user_agent = "Mozilla/5.0";
         //todo Add official master_server
 //    private final String master_server = "grolink.nl/Vroomrr/";
         private final String master_server = "http://10.0.2.2:5000/";
 
         // This is a constructor that allows you to pass in the JSON body
-        public PostNoSessionAsync(String postData, ServerCallback callback) {
+        public GetAsync(JSONObject postData, ServerCallback callback, Activity activity) {
             if (postData != null) {
-                try {
-                    this.postData = new JSONObject(postData);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                this.postData = postData;
                 this.callback = callback;
+                this.activity = activity;
+            }
+        }
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            StringBuffer data = new StringBuffer("");
+
+            try {
+                // Setup URL connection.
+                String newUrl = master_server + strings[0];
+                URL url = new URL(newUrl);
+                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setRequestProperty("Content-Type", "application/json; utf-8");
+                connection.setRequestProperty("Accept", "application/json");
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+
+                //todo Check if SessionId in SharedPreferences
+                connection.setRequestProperty("session_id", "");
+
+                // Try to write to server.
+                try( OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream())) {
+                    wr.write(postData.toString());
+                    wr.flush();
+                }
+
+                // Check on successful response
+                if(connection.getResponseCode() == 200) {
+                    InputStream inputStream = connection.getInputStream();
+                    BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
+                    String line = "";
+                    while ((line = rd.readLine()) != null) {
+                        data.append(line);
+                    }
+
+                    final StringBuffer returnData = data;
+
+                    // Do the callback
+                    activity.runOnUiThread(new Runnable() {
+                        public void run(){
+                            callback.completionHandler(true, returnData);
+                        }
+                    });
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    public static class PostAsync extends AsyncTask<String, Void, Void> {
+        JSONObject postData;
+        ServerCallback callback;
+        Activity activity;
+
+        // URL information for Server Connections
+        //todo Add official master_server
+//    private final String master_server = "grolink.nl/Vroomrr/";
+        private final String master_server = "http://10.0.2.2:5000/";
+
+        // This is a constructor that allows you to pass in the JSON body
+        public PostAsync(JSONObject postData, ServerCallback callback, Activity activity) {
+            if (postData != null) {
+                this.postData = postData;
+                this.callback = callback;
+                this.activity = activity;
             }
         }
 
@@ -183,6 +249,9 @@ final public class ServerConnection {
                 connection.setDoInput(true);
                 connection.setDoOutput(true);
 
+                //todo Check if SessionId in SharedPreferences
+                connection.setRequestProperty("session_id", "");
+
                 // Try to write to server.
                 try( OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream())) {
                     wr.write(postData.toString());
@@ -197,8 +266,15 @@ final public class ServerConnection {
                     while ((line = rd.readLine()) != null) {
                         data.append(line);
                     }
+
+                    final StringBuffer returnData = data;
+
                     // Do the callback
-                    callback.completionHandler(true, new JSONObject(String.valueOf(data)));
+                    activity.runOnUiThread(new Runnable() {
+                        public void run(){
+                            callback.completionHandler(true, returnData);
+                        }
+                    });
                 }
             } catch (Exception e){
                 e.printStackTrace();
