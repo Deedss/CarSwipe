@@ -23,6 +23,14 @@ def register():
 	if user.name == User.name or user.password == User.password or user.username == User.username:
 		return jsonify({"error": "Please provide a valid name, username and password"})
 
+	user_check = User.query.filter_by(username=user.username).first()
+	# Check if user exists
+	if user_check is not None:
+		return jsonify({"error": "This username is not available"})
+
+	if len(user.password) < 8:
+		return jsonify({"error": "Password must be at least 8 characters"})
+
 	user.user_id = str(uuid.uuid4())
 	# Hash password using ID as salt
 	user.password = hashlib.sha256((user.user_id + user.password).encode('utf-8')).hexdigest()
