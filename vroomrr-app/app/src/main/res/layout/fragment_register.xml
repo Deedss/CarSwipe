@@ -45,16 +45,6 @@
         android:hint="@string/placeholder_password"
         app:layout_constraintTop_toBottomOf="@id/username_register"/>
 
-    <EditText
-        android:id="@+id/license_register"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_margin="15dp"
-        android:inputType="textPassword"
-        android:autofillHints="@string/placeholder_license"
-        android:hint="@string/placeholder_license"
-        app:layout_constraintTop_toBottomOf="@id/password_register"/>
-
     <Button
         android:id="@+id/button_register"
         android:layout_width="match_parent"
@@ -62,7 +52,7 @@
         android:layout_margin="15dp"
         android:background="@color/colorAccent"
         android:text="@string/button_register"
-        app:layout_constraintTop_toBottomOf="@id/license_register" />
+        app:layout_constraintTop_toBottomOf="@id/password_register" />
 
     <TextView
         android:id="@+id/register_text"
