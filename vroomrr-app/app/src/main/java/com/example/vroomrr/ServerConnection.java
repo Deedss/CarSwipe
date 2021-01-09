@@ -2,16 +2,10 @@ package com.example.vroomrr;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.provider.Settings;
 
 import com.google.gson.Gson;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -184,7 +178,7 @@ final public class ServerConnection {
             StringBuffer data = new StringBuffer("");
 
             try {
-                SharedPreferences SP = GlobalApplication.getEncryptedSharedPreferences();
+                SharedPreferences SP = Cryptography.getEncryptedSharedPreferences(activity);
 
                 // Setup URL connection.
                 String newUrl = master_server + strings[0] + "/" + postData;
@@ -245,7 +239,7 @@ final public class ServerConnection {
             StringBuffer data = new StringBuffer("");
 
             try {
-                SharedPreferences SP = GlobalApplication.getEncryptedSharedPreferences();
+                SharedPreferences SP = Cryptography.getEncryptedSharedPreferences(activity);
 
                 // Setup URL connection.
                 String newUrl = master_server + strings[0];

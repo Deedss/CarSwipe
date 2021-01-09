@@ -1,33 +1,24 @@
 package com.example.vroomrr;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Base64;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
-import androidx.lifecycle.ProcessLifecycleOwner;
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKey;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.Key;
-import java.security.KeyPair;
+import java.security.GeneralSecurityException;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.UnrecoverableEntryException;
-import java.security.cert.CertificateException;
-import java.util.Arrays;
 
 import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
 
 final public class Cryptography {
     // Variables to use
@@ -109,7 +100,6 @@ final public class Cryptography {
         return new String(decodedData, StandardCharsets.UTF_8); // for UTF-8 encoding;
     }
 
-
     /**
      * Get the public Key from Keystore
      * @return PublicKey
@@ -147,5 +137,31 @@ final public class Cryptography {
         }
         // if fail return null
         return null;
+    }
+
+    /**
+     * Return the SharedPreferences of the application, normally it is stored encrypted hence this function.
+     * @param context , the context on where to call the SharedPreferences.
+     * @return returns the SharedPreferences object
+     */
+    public static SharedPreferences getEncryptedSharedPreferences(Context context) {
+        // Initialize the SharedPreferences and create Key Specifications.
+        SharedPreferences prf = null;
+        KeyGenParameterSpec spec = new KeyGenParameterSpec.Builder(
+                MasterKey.DEFAULT_MASTER_KEY_ALIAS,
+                KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                .setKeySize(MasterKey.DEFAULT_AES_GCM_MASTER_KEY_SIZE)
+                .build();
+
+        try {
+            // Build a new MasterKey with the specifications.
+            MasterKey masterKey = new MasterKey.Builder(context).setKeyGenParameterSpec(spec).build();
+            prf = EncryptedSharedPreferences.create(context, MasterKey.DEFAULT_MASTER_KEY_ALIAS, masterKey, EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV, EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM);
+        } catch (GeneralSecurityException | IOException e) {
+            e.printStackTrace();
+        }
+        return prf;
     }
 }
