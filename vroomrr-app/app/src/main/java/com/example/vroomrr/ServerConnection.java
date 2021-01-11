@@ -65,13 +65,12 @@ final public class ServerConnection {
     /**
      * returns an arraylist with all chats specific to the user.
      *
-     * @param user The User for which to import all chats.
      * @return Returns an arraylist of Chats.
      */
-    public ArrayList<Chat> getChats(User user) {
-        ArrayList<Chat> chats = null;
-
-        return chats;
+    public static void getChats(ServerCallback callback, Activity activity) {
+        Gson gson = new Gson();
+        GetAsync task = new GetAsync(callback, activity);
+        task.execute("chats");
     }
 
     /**
@@ -112,8 +111,8 @@ final public class ServerConnection {
 
     public static void addCar(String licenseplate, ServerCallback callback, Activity activity){
         Gson gson = new Gson();
-        GetAsync task = new GetAsync(licenseplate, callback, activity);
-        task.execute("cars/add/");
+        GetAsync task = new GetAsync(callback, activity);
+        task.execute("cars/add/"+licenseplate);
     }
 
     /**
@@ -186,22 +185,18 @@ final public class ServerConnection {
     }
 
     public static class GetAsync extends AsyncTask<String, Void, Void> {
-        String postData;
         ServerCallback callback;
         Activity activity;
 
         // URL information for Server Connections
         //todo Add official master_server
-//    private final String master_server = "https://grolink.nl/";
-        private final String master_server = "http://10.0.2.2:5000/";
+        private final String master_server = "https://grolink.nl/";
+        //private final String master_server = "http://10.0.2.2:5000/";
 
         // This is a constructor that allows you to pass in the JSON body
-        public GetAsync(String postData, ServerCallback callback, Activity activity) {
-            if (postData != null) {
-                this.postData = postData;
-                this.callback = callback;
-                this.activity = activity;
-            }
+        public GetAsync(ServerCallback callback, Activity activity) {
+            this.callback = callback;
+            this.activity = activity;
         }
 
         @Override
@@ -212,12 +207,12 @@ final public class ServerConnection {
                 SharedPreferences SP = Cryptography.getEncryptedSharedPreferences(activity);
 
                 // Setup URL connection.
-                String newUrl = master_server + strings[0] + "/" + postData;
+                String newUrl = master_server + strings[0];
                 URL url = new URL(newUrl);
                 HttpURLConnection connection = (HttpURLConnection)url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setRequestProperty("Content-Type", "application/json; utf-8");
-                connection.setRequestProperty("session_id", SP.getString("SessionID",""));
+                connection.setRequestProperty("Session-Id", SP.getString("SessionID",""));
                 connection.connect();
 
                 InputStream inputStream = connection.getInputStream();
@@ -253,8 +248,8 @@ final public class ServerConnection {
 
         // URL information for Server Connections
         //todo Add official master_server
-//    private final String master_server = "https://grolink.nl/";
-        private final String master_server = "http://10.0.2.2:5000/";
+        private final String master_server = "https://grolink.nl/";
+        //private final String master_server = "http://10.0.2.2:5000/";
 
         // This is a constructor that allows you to pass in the JSON body
         public PostAsync(String postData, ServerCallback callback, Activity activity) {
@@ -282,7 +277,7 @@ final public class ServerConnection {
                 connection.setDoInput(true);
                 connection.setDoOutput(true);
                 if(SP.contains("SessionID")){
-                    connection.setRequestProperty("session_id", SP.getString("SessionID", ""));
+                    connection.setRequestProperty("Session-Id", SP.getString("SessionID", ""));
                 }
                 // Try to write to server.
                 try( OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream())) {

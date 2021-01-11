@@ -1,30 +1,39 @@
 package com.example.vroomrr.ui.chat;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.vroomrr.Car;
 import com.example.vroomrr.Chat;
 import com.example.vroomrr.R;
 
 import java.util.ArrayList;
 
-public class ChatListViewAdapter extends RecyclerView.Adapter<ChatListViewAdapter.ChatListViewHolder> {
+public class ChatListViewAdapter extends RecyclerView.Adapter<ChatListViewAdapter.ChatListViewHolder>{
+    private ArrayList<Chat> Chats;
+    private Context context;
+    private static OnActionListener mListener;
 
-    private ArrayList<Chat> chats;
+    public ChatListViewAdapter(Context context, OnActionListener listener, ArrayList<Chat> Chats) {
+        this.context = context;
+        this.mListener = listener;
+        this.Chats = Chats;
+    }
 
-    public ChatListViewAdapter(ArrayList<Chat> chats) {
-        this.chats = chats;
-        //todo To remove later on
-        chats.add(new Chat(0, "1"));
-        chats.add(new Chat(0, "2"));
+    public void updateData(ArrayList<Chat> chats){
+        this.Chats = chats;
+        this.notifyDataSetChanged();
     }
 
     @NonNull
@@ -34,33 +43,49 @@ public class ChatListViewAdapter extends RecyclerView.Adapter<ChatListViewAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ChatListViewHolder holder, int position) {
-        holder.chat_image.setImageResource(chats.get(position).getChat_imageResource());
-        holder.chat_text.setText(chats.get(position).getChatId());
-        holder.chat_cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //ToDo Open Specific Chat.
-            }
-        });
+    public void onBindViewHolder(@NonNull final ChatListViewHolder holder, final int position) {
+       // holder.Chat_image.setImageResource(Chats.get(position).getImageResource());
+        holder.Chat_name.setText(Chats.get(position).getChatId());
     }
 
     @Override
     public int getItemCount() {
-        return chats.size();
+        return Chats.size();
     }
 
-    public class ChatListViewHolder extends RecyclerView.ViewHolder {
-        // Variables in ChatRow
-        ImageView chat_image;
-        TextView chat_text;
-        CardView chat_cardView;
+    /**
+     * Returns the ArrayList with Chats
+     * @return ArrayList
+     */
+    public ArrayList<Chat> getChats() {
+        return Chats;
+    }
+
+    interface OnActionListener{
+        void openChat(int adapterPosition);
+    }
+
+
+    public static class ChatListViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
+        // Variables
+        ImageView Chat_image;
+        TextView Chat_name;
 
         public ChatListViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.chat_cardView = itemView.findViewById(R.id.chat_cardView);
-            this.chat_image = itemView.findViewById(R.id.chat_image);
-            this.chat_text = itemView.findViewById(R.id.chat_text);
+            this.Chat_image = itemView.findViewById(R.id.chat_image);
+            this.Chat_name = itemView.findViewById(R.id.chat_text);
+
+            itemView.findViewById(R.id.chat_row).setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            mListener.openChat(getAdapterPosition());
         }
     }
+
+
+
+
 }

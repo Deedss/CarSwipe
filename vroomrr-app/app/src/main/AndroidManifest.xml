@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.car.CarActivity"></activity>
+        <activity android:name=".ui.chat.ChatActivity"></activity>
+        <activity android:name=".ui.car.CarActivity" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
