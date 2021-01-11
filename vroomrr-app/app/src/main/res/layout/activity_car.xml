@@ -3,13 +3,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.car.CarFragment"
-    android:id="@+id/car_viewCar">
+    tools:context=".ui.car.CarActivity"
+    android:id="@+id/car_viewCar"
+    android:orientation="vertical">
 
     <!-- TODO: Update blank fragment layout -->
+    <ImageView
+        android:id="@+id/car_carImage"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_margin="20dp"
+        android:contentDescription="@string/car_image"
+        />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="@string/hello_blank_fragment" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </LinearLayout>

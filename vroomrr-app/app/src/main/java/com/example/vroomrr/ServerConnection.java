@@ -2,12 +2,17 @@ package com.example.vroomrr;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Base64;
 
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -152,6 +157,32 @@ final public class ServerConnection {
         PublicKey publicKey = null;
 
         return publicKey;
+    }
+
+    /**
+     * Encode an image to a Base64 to send it to the server.
+     * @param bitmap , bitmap image to send
+     * @param context , Context of where to get the resources.
+     * @return , return a Base64 string.
+     */
+    public static String encodeToBase64(Bitmap bitmap, Context context){
+        //encode image to base64 string
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        return Base64.encodeToString(imageBytes, Base64.DEFAULT);
+    }
+
+    /**
+     * Return a bitmap of the base64 encoded image
+     * @param string , Base64 encoded string
+     * @param context , Context of the image.
+     * @return , return Bitmap value.
+     */
+    public static Bitmap decodeToBitmap(String string, Context context){
+        //decode base64 string to image
+        byte[] imageBytes = Base64.decode(string, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
     }
 
     public static class GetAsync extends AsyncTask<String, Void, Void> {
