@@ -27,7 +27,7 @@ The backend server is now ready to be used verify by going to `localhost:5000`
 
 To run the production server yourself (Instead of the one we are running at https://$SERVER.nl/vroomrr/) you will need to have installed NGINX on your server. Follow all the steps like above but run docker in headless mode. You will need to have prior experience with Linux and servers.
 - Follow steps above for Ubuntu until build
-- Build docker image `docker build --tag vroomrr-api - < Dockerfile.production`
+- Build docker image `docker build --tag vroomrr-api -f Dockerfile.production .`
 - Run Docker container in headless mode using `docker run --publish 5000:5000 -dit vroomrr-api`
 - Copy NGINX virtual host file to NGINX `cp vroomrr-api/vroomrr.nginx /etc/nginx/sites-available/vroomrr`
 - Change file as needed replacing `SERVER_NAME` and `ssl_certificate` path with correct information regarding your webserver
