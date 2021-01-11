@@ -4,12 +4,17 @@ from model.session import Session
 from model.car import Car
 from model.car_images import Car_images
 from model.filter import Filter
+from model.opinion import Opinion
+from model.chat import Chat
+from model.message import Message
+from model.image64 import Image64
 
 from ext import db
 from rdw import RDW
 from wikimedia import Wikimedia
+from sqlalchemy import or_
 
-import uuid, hashlib, urllib.request
+import uuid, hashlib, urllib.request, base64, imghdr, os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:password@localhost/vroomrr'
@@ -83,9 +88,102 @@ def getUser():
 		return jsonify({"error": "Session has expired or does not exist"})
 
 
+# Give opinion about a user
+@app.route('/candidates/opinion', methods=['POST'])
+def opinionUser():
+	op = Opinion.from_dict(request.json)
+	user_self = checkSession(request)
+	# Check session is valid
+	if user_self:
+		# Check if user exists
+		if User.query.filter_by(user_id=op.user_id_match).first() is None:
+			return jsonify({"error": "This user does not exist"})
+		# Check if old rating exist
+		old_rating = Opinion.query.filter(Opinion.user_id == user_self.user_id, Opinion.user_id_match == op.user_id_match).first()
+		if old_rating is not None:
+			if old_rating.opinion == 'yellow':
+				Opinion.query.filter(Opinion.user_id == user_self.user_id, Opinion.user_id_match == op.user_id_match).delete()
+				db.session.commit()
+			else:
+				return jsonify({"error": "This user has already been rated"})
+
+		if op.opinion != 'yellow' and op.opinion != 'red' and op.opinion != 'green':
+			return jsonify({"error": "Invalid opinion, choose either yellow, red or green"})
+		# Add (new) rating to database
+		op.user_id = user_self.user_id
+		db.session.add(op)
+		db.session.commit()
+
+		# Check if other user has already rated this user and rating was both green
+		# also check if current user rating is green, if so add match
+		possible_rating = Opinion.query.filter(Opinion.user_id == op.user_id_match, Opinion.user_id_match == user_self.user_id).first()
+		if possible_rating is not None and possible_rating.opinion == 'green' and op.opinion == 'green':
+			chat = Chat(chat_id=str(uuid.uuid4()), user_id1=user_self.user_id, user_id2=op.user_id_match)
+			db.session.add(chat)
+			db.session.commit()
+			return jsonify(chat)
+		else:
+			return jsonify({"match": False})
+	else:
+		return jsonify({"error": "Session has expired or does not exist"})
+
+
+# Get's all the messages for a chat using ChatID
+@app.route('/chat/messages', methods=['POST'])
+def getChatMessages():
+	chat = Chat.from_dict(request.json)
+	user_self = checkSession(request)
+	# Check session is valid
+	if user_self:
+		# Check if chat exists
+		if Chat.query.filter_by(chat_id=chat.chat_id).first() is None:
+			return jsonify({"error": "This chat does not exist"})
+
+		return jsonify(Message.query.filter_by(chat_id=chat.chat_id).all())
+	else:
+		return jsonify({"error": "Session has expired or does not exist"})
+
+
+# Send chat message
+@app.route('/chat/send', methods=['POST'])
+def sendChatMessage():
+	message = Message.from_dict(request.json)
+	user_self = checkSession(request)
+	# Check session is valid
+	if user_self:
+		# Check if chat exists
+		chat = Chat.query.filter_by(chat_id=message.chat_id).first()
+		if chat is None:
+			return jsonify({"error": "This chat does not exist"})
+
+		# Check if user is allowed to send in this chat
+		if chat.user_id1 != user_self.user_id or chat.user_id2 != user_self.user_id:
+			return jsonify({"error": "You do not have permission to send messages in this chat"})
+
+		if message.chat_id == '' and message.content == '' and len(message.content) < 1024:
+			return jsonify({"error": "Please enter a valid ChatId, UserId with a message content max size 1024 min size 1"})
+		else:
+			message.message_id = str(uuid.uuid4())
+			message.user_id = user_self.user_id
+			db.session.add(message)
+			db.session.commit()
+			return jsonify(message)
+	else:
+		return jsonify({"error": "Session has expired or does not exist"})
+
+
+# Returns user chats
+@app.route('/chats')
+def getChats():
+	user_self = checkSession(request)
+	# Check session is valid
+	if user_self:
+		return jsonify(Chat.query.filter(or_(Chat.user_id1 == user_self.user_id, Chat.user_id2 == user_self.user_id)).all())
+	else:
+		return jsonify({"error": "Session has expired or does not exist"})
+
+
 # Returns match candidates using UID
-# TODO add /candidates/chats
-# TODO add /chat and /chat/messages and /chat/send
 @app.route('/candidates')
 def getCandidates():
 	user_self = checkSession(request)
@@ -266,7 +364,7 @@ def deleteCar():
 		return jsonify({"error": "Session has expired"})
 
 
-@app.route('/image/<id>')
+@app.route('/cars/image/<id>')
 def getImage(id):
 	img = Car_images.query.filter_by(car_images_id=id).first()
 	if img:
@@ -285,6 +383,64 @@ def getCarImages():
 	if checkSession(request):
 		images = Car_images.query.filter_by(license_plate=car.license_plate).all()
 		return jsonify(images)
+	else:
+		return jsonify({"error": "Session has expired or does not exist"})
+
+
+# Add car image
+@app.route('/cars/image/add', methods=['POST'])
+def addCarImage():
+	image = Image64.from_dict(request.json)
+	if image.license_plate == '' or image.image64 == '':
+		return jsonify({"error": "license_plate or image64 cannot be empty"})
+
+	# Check session is valid
+	user_self = checkSession(request)
+	if user_self:
+		# Check if user owns this car
+		cah = Car.query.filter_by(license_plate=image.license_plate).first()
+		if cah.user_id == user_self.user_id:
+			nimage = Car_images()
+			nimage.car_images_id = str(uuid.uuid4())
+			nimage.license_plate = cah.license_plate
+			nimage.image = 'car_images/' + nimage.car_images_id + '.jpg'
+			with open(nimage.image, "wb") as fh:
+				fh.write(base64.decodebytes(str.encode(image.image64)))
+			type = imghdr.what(nimage.image)
+			if type == 'jpeg' or type == 'png' or type == 'gif' or type == 'jpg':
+				db.session.add(nimage)
+				db.session.commit()
+			else:
+				os.remove(nimage.image)
+				return jsonify({"error": "Data is not a valid image"})
+			return jsonify(nimage)
+		else:
+			return jsonify({"error": "You do not own this car"})
+	else:
+		return jsonify({"error": "Session has expired or does not exist"})
+
+
+# Delete car image
+@app.route('/cars/image/delete', methods=['POST'])
+def deleteCarImage():
+	image_tmp = Car_images.from_dict(request.json)
+	if image_tmp.car_images_id == "":
+		return jsonify({"error": "imageId cannot be empty"})
+	image = Car_images.query.filter_by(car_images_id=image_tmp.car_images_id).first()
+	if image is None:
+		return jsonify({"error": "Image does not exist"})
+	# Check session is valid
+	user_self = checkSession(request)
+	if user_self:
+		# Check if user owns this car
+		cah = Car.query.filter_by(license_plate=image.license_plate).first()
+		if cah.user_id == user_self.user_id:
+			Car_images.query.filter_by(car_images_id=image.car_images_id).delete()
+			db.session.commit()
+			os.remove(image.image)
+			return jsonify({"status": "Image deleted"})
+		else:
+			return jsonify({"error": "You do not own this car"})
 	else:
 		return jsonify({"error": "Session has expired or does not exist"})
 

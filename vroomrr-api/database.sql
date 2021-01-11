@@ -76,9 +76,10 @@ CREATE TABLE `car_images` (
 
 CREATE TABLE `chat` (
   `chat_id` varchar(64) NOT NULL,
+  `user_id1` varchar(64) NOT NULL,
+  `user_id2` varchar(64) NOT NULL,
   `start` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
-
 -- --------------------------------------------------------
 
 --
@@ -134,16 +135,6 @@ CREATE TABLE `user` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user_matches`
---
-
-CREATE TABLE `user_matches` (
-  `chat_id` varchar(64) NOT NULL,
-  `user_id_first` varchar(64) NOT NULL,
-  `user_id_second` varchar(64) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
-
---
 -- Indexes for dumped tables
 --
 
@@ -188,13 +179,6 @@ ALTER TABLE `session`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`user_id`);
-
---
--- Indexes for table `user_matches`
---
-ALTER TABLE `user_matches`
-  ADD PRIMARY KEY (`chat_id`);
-COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -2,9 +2,6 @@ from ext import db
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 
-from model.car import Car
-
-
 @dataclass_json
 @dataclass
 class User(db.Model):

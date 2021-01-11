@@ -1,22 +1,3 @@
-#
-# TABLE STRUCTURE FOR: car
-#
-
-DROP TABLE IF EXISTS `car`;
-
-CREATE TABLE `car` (
-  `license_plate` varchar(16) NOT NULL,
-  `user_id` varchar(64) NOT NULL,
-  `brand` varchar(64) NOT NULL,
-  `color` varchar(64) NOT NULL,
-  `type` varchar(64) NOT NULL,
-  `horsepower` int(8) NOT NULL,
-  `build_year` int(8) NOT NULL,
-  `fuel_type` enum('benzine','diesel','lpg','elektriciteit') NOT NULL,
-  `description` varchar(1024) NULL,
-  `selected` BOOLEAN NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
-
 INSERT INTO `car` (`license_plate`, `user_id`, `brand`, `color`, `type`, `horsepower`, `build_year`, `fuel_type`, `selected`) VALUES ('00-njg-32', 'ebed39f6-5f7f-3913-b69b-a4c761c97945', ' Mitsubishi', 'LightSalmon', ' Caprice', 135, 1998, 'elektriciteit', true);
 INSERT INTO `car` (`license_plate`, `user_id`, `brand`, `color`, `type`, `horsepower`, `build_year`, `fuel_type`, `selected`) VALUES ('00-ubq-48', '143b1c12-557c-3681-83f9-fba2ee88f483', ' Chrysler', 'Lavender', ' Celica', 506, 1983, 'lpg', true);
 INSERT INTO `car` (`license_plate`, `user_id`, `brand`, `color`, `type`, `horsepower`, `build_year`, `fuel_type`, `selected`) VALUES ('02-cvp-00', '2adbfccc-d07a-3fb1-8ba6-e93f6feb8f7c', ' Lancia', 'Ivory', ' Yukon', 85, 1994, 'diesel', true);
@@ -118,86 +99,6 @@ INSERT INTO `car` (`license_plate`, `user_id`, `brand`, `color`, `type`, `horsep
 INSERT INTO `car` (`license_plate`, `user_id`, `brand`, `color`, `type`, `horsepower`, `build_year`, `fuel_type`, `selected`) VALUES ('98-mtp-80', '083c4714-07bc-31ec-bf31-62fcbc10c4ec', ' Aston Martin', 'DimGray', ' Windstar', 201, 1975, 'diesel', true);
 INSERT INTO `car` (`license_plate`, `user_id`, `brand`, `color`, `type`, `horsepower`, `build_year`, `fuel_type`, `selected`) VALUES ('99-fho-31', '2c06f9e8-e621-38a4-913c-011ac4b66075', ' Nissan', 'Chartreuse', ' Escalade EXT', 285, 1988, 'lpg', true);
 INSERT INTO `car` (`license_plate`, `user_id`, `brand`, `color`, `type`, `horsepower`, `build_year`, `fuel_type`, `selected`) VALUES ('49jfgv', '47b6b871-26ce-43f3-9dc0-17a6ccb0505a', ' Volvo', 'Black', ' S60', 140, 2002, 'benzine', true);
-#
-# TABLE STRUCTURE FOR: car_images
-#
-
-DROP TABLE IF EXISTS `car_images`;
-
-CREATE TABLE `car_images` (
-  `car_images_id` varchar(64) NOT NULL,
-  `license_plate` varchar(16) NOT NULL,
-  `image` varchar(2048) NOT NULL,
-  PRIMARY KEY (`car_images_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
-
-#
-# TABLE STRUCTURE FOR: chat
-#
-
-DROP TABLE IF EXISTS `chat`;
-
-CREATE TABLE `chat` (
-  `chat_id` varchar(64) NOT NULL,
-  `start` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`chat_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
-
-#
-# TABLE STRUCTURE FOR: message
-#
-
-DROP TABLE IF EXISTS `message`;
-
-CREATE TABLE `message` (
-  `message_id` varchar(64) NOT NULL,
-  `chat_id` varchar(64) NOT NULL,
-  `user_id` varchar(64) NOT NULL,
-  `time` timestamp NOT NULL DEFAULT current_timestamp(),
-  `content` varchar(1028) NOT NULL,
-  PRIMARY KEY (`message_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
-
-#
-# TABLE STRUCTURE FOR: opinion
-#
-
-DROP TABLE IF EXISTS `opinion`;
-
-CREATE TABLE `opinion` (
-  `user_id` varchar(64) NOT NULL,
-  `user_id_match` varchar(64) NOT NULL,
-  `opinion` enum('green','yellow','red','') NOT NULL,
-  PRIMARY KEY (`user_id`,`user_id_match`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
-
-#
-# TABLE STRUCTURE FOR: session
-#
-
-DROP TABLE IF EXISTS `session`;
-
-CREATE TABLE `session` (
-  `session_id` varchar(64) NOT NULL,
-  `user_id` varchar(64) NOT NULL,
-  `time` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`session_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
-
-#
-# TABLE STRUCTURE FOR: user
-#
-
-DROP TABLE IF EXISTS `user`;
-
-CREATE TABLE `user` (
-  `user_id` varchar(64) NOT NULL,
-  `username` varchar(64) NOT NULL,
-  `name` varchar(64) NOT NULL,
-  `password` varchar(64) NOT NULL,
-  `public_key` varchar(1028) NOT NULL,
-  PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `user` (`user_id`, `username`, `name`, `password`, `public_key`) VALUES ('04e8e2f8-5520-376f-8873-d3997af6352b', 'aspinka', 'Casimir', '9194b46814b28eae3dc1e3c130fc72d141462af0', '');
 INSERT INTO `user` (`user_id`, `username`, `name`, `password`, `public_key`) VALUES ('04e99e1e-5a61-3d4e-bbd2-c5b7657f7b27', 'kellen66', 'Oscar', 'bc2e2b7b78e78bec39d497904e15659d04873bf4', '');
@@ -300,16 +201,3 @@ INSERT INTO `user` (`user_id`, `username`, `name`, `password`, `public_key`) VAL
 INSERT INTO `user` (`user_id`, `username`, `name`, `password`, `public_key`) VALUES ('fda886fd-9683-3cf5-9604-7ef2fb2068e2', 'roxanne67', 'Terrance', '43dbf3b2d1bfc532ba4a07463a01953bf3e9da77', '');
 INSERT INTO `user` (`user_id`, `username`, `name`, `password`, `public_key`) VALUES ('ff5a5be3-12a5-3a2a-bb3c-6b967b886207', 'trisha13', 'Ruth', 'd655c4d04bfb00363599a751a052f61bc0e56203', '');
 INSERT INTO `user` (`user_id`, `username`, `name`, `password`, `public_key`) VALUES ('47b6b871-26ce-43f3-9dc0-17a6ccb0505a', 'luuk', 'Luuk Esselbrugge', '0f52c4659c484a859996e4e3dce7c32b1d9b04085ae517b6da19a3bca3b262b1', 'KEY');
-#
-# TABLE STRUCTURE FOR: user_matches
-#
-
-DROP TABLE IF EXISTS `user_matches`;
-
-CREATE TABLE `user_matches` (
-  `chat_id` varchar(64) NOT NULL,
-  `user_id_first` varchar(64) NOT NULL,
-  `user_id_second` varchar(64) NOT NULL,
-  PRIMARY KEY (`chat_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
-

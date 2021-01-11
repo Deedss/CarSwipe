@@ -5,14 +5,14 @@ from dataclasses_json import dataclass_json
 @dataclass_json
 @dataclass
 class Message(db.Model):
-	messageid: str
+	message_id: str
 	chat_id: str
 	user_id: str
 	time: str
 	content: str
 
-	messageid = db.Column(db.String(64), primary_key=True)
-	chat_id = db.Column(db.String(64), unique=True)
-	user_id = db.Column(db.String(64), unique=True)
-	time = db.Column(db.datetime())
+	message_id = db.Column(db.String(64), primary_key=True)
+	chat_id = db.Column(db.String(64))
+	user_id = db.Column(db.String(64))
+	time = db.Column(db.String(64))
 	content = db.Column(db.String(1028))
