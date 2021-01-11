@@ -27,10 +27,10 @@ public class CarListFragment extends Fragment implements CarListViewAdapter.OnAc
         root = inflater.inflate(R.layout.fragment_car_list, container, false);
 
         //todo To remove later on
-        cars.add(new Car("1","1", "1",0,0));
-        cars.add(new Car("2","2", "2",0,0));
-        cars.add(new Car("3","3", "3",0,0));
-        cars.add(new Car("4","4", "4",0,0));
+        cars.add(new Car("1","1", "1",0,0, "volvo", "v70"));
+        cars.add(new Car("2","2", "2",0,0,"volvo", "v70"));
+        cars.add(new Car("3","3", "3",0,0,"volvo", "v70"));
+        cars.add(new Car("4","4", "4",0,0,"volvo", "v70"));
 
         // Build RecyclerView and set Adapter
         recyclerView = root.findViewById(R.id.car_recyclerview);
@@ -55,13 +55,13 @@ public class CarListFragment extends Fragment implements CarListViewAdapter.OnAc
     /**
      * Open a specific car from the list of available cars.
      * @param adapterPosition the position on the recyclerview
-     * @param v the View
      */
     @Override
     public void openCar(int adapterPosition) {
         Gson gson = new Gson();
         Intent intent = new Intent(getActivity(), CarActivity.class);
-        intent.putExtra("car", gson.toJson(cars.get(adapterPosition)));
+        System.out.println(gson.toJson(cars.get(adapterPosition)));
+        intent.putExtra("car_info", gson.toJson(cars.get(adapterPosition)));
         getActivity().startActivity(intent);
     }
 }
