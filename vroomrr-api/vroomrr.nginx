@@ -1,0 +1,19 @@
+server {
+    listen      443 ssl;
+    listen      80;
+    server_name grolink.nl;
+    charset utf-8;
+    index   index.html index.htm;
+    ssl_certificate /etc/letsencrypt/live/grolink.nl/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/grolink.nl/privkey.pem;
+
+if ($ssl_protocol = "") {
+ rewrite ^ https://$server_name$request_uri? permanent;
+}
+    # Always serve index.html for any request
+     location / {
+      proxy_pass http://localhost:5000/;
+     }
+    error_log  /var/log/nginx/vroomrr-app-error.log;
+    access_log /var/log/nginx/vroomrr-app-access.log;
+}
