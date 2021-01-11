@@ -1,7 +1,6 @@
 package com.example.vroomrr.ui.login;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +11,6 @@ import androidx.fragment.app.Fragment;
 
 import com.example.vroomrr.R;
 import com.example.vroomrr.ServerCallback;
-import com.example.vroomrr.ServerConnection;
-
-import org.json.JSONObject;
 
 public class LoginFragment extends Fragment implements ServerCallback {
     private View root;
@@ -44,7 +40,7 @@ public class LoginFragment extends Fragment implements ServerCallback {
     }
 
     @Override
-    public void completionHandler(Boolean success, String object) {
+    public void completionHandler(String object) {
 
     }
 }

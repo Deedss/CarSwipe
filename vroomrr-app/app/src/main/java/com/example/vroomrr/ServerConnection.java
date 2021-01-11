@@ -11,6 +11,11 @@ import android.util.Base64;
 
 import com.google.gson.Gson;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -99,31 +104,93 @@ final public class ServerConnection {
     }
 
     /**
-     * Get the information from your car via the RDW api
-     *
-     * @param licenseplate the licensplate of the
-     * @return returns the
+     * Get all cars from a specific user
+     * @param user The User for which to get all cars.
+     * @param callback The callback to return results to
+     * @param activity The activity to return results to
      */
-    public Car getCar(String licenseplate) {
-        Car car = null;
-
-        return car;
-    }
-
-    public static void addCar(String licenseplate, ServerCallback callback, Activity activity){
+    public static void getCars(User user, ServerCallback callback, Activity activity) {
         Gson gson = new Gson();
-        GetAsync task = new GetAsync(licenseplate, callback, activity);
-        task.execute("cars/add/");
+        PostAsync task = new PostAsync(user.getUserId(), callback, activity);
+        task.execute("cars");
     }
 
     /**
-     * Update info on specific car
-     *
-     * @param car  car to update info on
-     * @param info info to add in database
+     * Add a car for a specific user
+     * @param licenseplate The licenseplate for which to add a car.
+     * @param callback The callback to return results to
+     * @param activity The activity to return results to
      */
-    public void updateInfo(Car car, String info) {
+    public static void addCar(String licenseplate, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(licenseplate, callback, activity);
+        task.execute("cars/add/");
+    }
 
+    public static void deleteCar(Car car, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(car.getLicense(), callback, activity);
+        task.execute("cars/delete");
+    }
+
+    /**
+     * Update all information of a car object.
+     * @param car  car to update info on
+     * @param callback Callback implementation
+     * @param activity the activity from where function is called.
+     */
+    public static void updateCar(Car car, ServerCallback callback, Activity activity) {
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(gson.toJson(car), callback, activity);
+        task.execute("cars/update/");
+    }
+
+    /**
+     * Get a specific car Image for a car.
+     * @param car The car to get an image for.
+     * @param callback The callback to return results to
+     * @param activity The activity to return results to
+     */
+    public static void getCarImage(Car car, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(String.valueOf(car.getImageResource()), callback, activity);
+        task.execute("cars/image/");
+    }
+
+    /**
+     * Get all images for a car
+     * @param car The car to get all images for
+     * @param callback The callback to return results to
+     * @param activity The activity to return results to
+     */
+    public static void getCarImages(Car car, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(car.getLicense(), callback, activity);
+        task.execute("cars/images");
+    }
+
+    /**
+     * Add a new image to a specific car.
+     * @param car The car to add new image for
+     * @param callback The callback to return results to
+     * @param activity The activity to return results to
+     */
+    public static void addCarImage(Car car, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(car.getLicense(), callback, activity);
+        task.execute("/cars/image/add");
+    }
+
+    /**
+     * Delete an image for a car.
+     * @param car The car to delete image for
+     * @param callback The callback to return results to
+     * @param activity The activity to return results to
+     */
+    public static void deleteCarImage(Car car, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(car.getLicense(), callback, activity);
+        task.execute("/cars/image/delete");
     }
 
     /**
@@ -185,6 +252,17 @@ final public class ServerConnection {
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
     }
 
+    private boolean checkJSON(String jsonString) throws JSONException {
+        Object json = new JSONTokener(jsonString).nextValue();
+        if (json instanceof JSONObject){
+            return true;
+        }
+        else if (json instanceof JSONArray){
+            return false;
+        }
+        return false;
+    }
+
     public static class GetAsync extends AsyncTask<String, Void, Void> {
         String postData;
         ServerCallback callback;
@@ -234,7 +312,7 @@ final public class ServerConnection {
                 // Do the callback
                 activity.runOnUiThread(new Runnable() {
                     public void run(){
-                        callback.completionHandler(true, returnData);
+                        callback.completionHandler(returnData);
                     }
                 });
 
@@ -303,7 +381,7 @@ final public class ServerConnection {
                 // Do the callback
                 activity.runOnUiThread(new Runnable() {
                     public void run(){
-                        callback.completionHandler(true, returnData);
+                        callback.completionHandler(returnData);
                     }
                 });
 
