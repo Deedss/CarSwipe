@@ -26,7 +26,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id=""
+            android:id="@+id/chat_response"
             android:background="@drawable/sent_message"
             android:textColor="#fff"
             android:padding="10dp"
@@ -59,7 +59,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id=""
+            android:id="@+id/chat_message"
             android:layout_below="@+id/name"
             android:layout_alignLeft="@+id/name"
             android:background="@drawable/received_message"

@@ -37,9 +37,9 @@ public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull final CarListViewHolder holder, final int position) {
-        holder.car_image.setImageResource(cars.get(position).getImageResource());
-        holder.car_name.setText(cars.get(position).getName());
-        holder.car_license.setText(cars.get(position).getLicense());
+        holder.car_image.setImageResource(0);
+        holder.car_name.setText(cars.get(position).getType());
+        holder.car_license.setText(cars.get(position).getLicense_plate());
     }
 
     @Override

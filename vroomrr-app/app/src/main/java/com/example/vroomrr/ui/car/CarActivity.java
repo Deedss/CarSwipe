@@ -65,11 +65,7 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
      * This function is used to easily update all items in the Car object.
      */
     private void insertCarData() {
-        // Fill TextView from Car object
-        car_licenseplate.setText(car.getLicense());
-        car_brand.setText(car.getBrand());
-        car_model.setText(car.getModel());
-        car_mileage.setText(String.valueOf(car.getMileage()));
+
     }
 
     @Override

@@ -173,9 +173,11 @@ final public class Cryptography {
      */
     public static void addToSharedPreferences(Context context, String key, String value){
         SharedPreferences SP = Cryptography.getEncryptedSharedPreferences( context);
-        SharedPreferences.Editor editor = SP.edit();
-        editor.putString(key, value);
-        editor.apply();
+        if (!SP.contains(key)){
+            SharedPreferences.Editor editor = SP.edit();
+            editor.putString(key, value);
+            editor.apply();
+        }
     }
 
     /**

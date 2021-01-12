@@ -71,13 +71,12 @@ final public class ServerConnection {
     /**
      * returns an arraylist with all chats specific to the user.
      *
-     * @param user The User for which to import all chats.
      * @return Returns an arraylist of Chats.
      */
-    public ArrayList<Chat> getChats(User user) {
-        ArrayList<Chat> chats = null;
-
-        return chats;
+    public static void getChats(ServerCallback callback, Activity activity) {
+        Gson gson = new Gson();
+        GetAsync task = new GetAsync(callback, activity);
+        task.execute("chats");
     }
 
     /**
@@ -109,9 +108,8 @@ final public class ServerConnection {
      * @param callback The callback to return results to
      * @param activity The activity to return results to
      */
-    public static void getCars(ServerCallback callback, Activity activity) {
-        Gson gson = new Gson();
-        GetAsync task = new GetAsync(callback, activity);
+    public static void getCars(User user, ServerCallback callback, Activity activity) {
+        PostAsync task = new PostAsync(new Gson().toJson(user), callback, activity);
         task.execute("cars");
     }
 
@@ -129,7 +127,7 @@ final public class ServerConnection {
 
     public static void deleteCar(Car car, ServerCallback callback, Activity activity){
         Gson gson = new Gson();
-        PostAsync task = new PostAsync(car.getLicense(), callback, activity);
+        PostAsync task = new PostAsync(car.getLicense_plate(), callback, activity);
         task.execute("cars/delete");
     }
 
@@ -153,8 +151,8 @@ final public class ServerConnection {
      */
     public static void getCarImage(Car car, ServerCallback callback, Activity activity){
         Gson gson = new Gson();
-        PostAsync task = new PostAsync(String.valueOf(car.getImageResource()), callback, activity);
-        task.execute("cars/image/");
+        GetAsync task = new GetAsync(callback, activity);
+        task.execute("cars/image/" + car.getLicense_plate());
     }
 
     /**
@@ -165,7 +163,7 @@ final public class ServerConnection {
      */
     public static void getCarImages(Car car, ServerCallback callback, Activity activity){
         Gson gson = new Gson();
-        PostAsync task = new PostAsync(car.getLicense(), callback, activity);
+        PostAsync task = new PostAsync(car.getLicense_plate(), callback, activity);
         task.execute("cars/images");
     }
 
@@ -177,8 +175,8 @@ final public class ServerConnection {
      */
     public static void addCarImage(Car car, ServerCallback callback, Activity activity){
         Gson gson = new Gson();
-        PostAsync task = new PostAsync(car.getLicense(), callback, activity);
-        task.execute("/cars/image/add");
+        PostAsync task = new PostAsync(car.getLicense_plate(), callback, activity);
+        task.execute("cars/image/add");
     }
 
     /**
@@ -189,8 +187,8 @@ final public class ServerConnection {
      */
     public static void deleteCarImage(Car car, ServerCallback callback, Activity activity){
         Gson gson = new Gson();
-        PostAsync task = new PostAsync(car.getLicense(), callback, activity);
-        task.execute("/cars/image/delete");
+        PostAsync task = new PostAsync(car.getLicense_plate(), callback, activity);
+        task.execute("cars/image/delete");
     }
 
     /**
@@ -283,8 +281,11 @@ final public class ServerConnection {
             StringBuffer data = new StringBuffer("");
 
             try {
+                Cryptography.addToSharedPreferences(activity, String.valueOf(R.string.SessionId), "05480a28-74ae-40e5-a912-731564c232bf");
+                Cryptography.updateSharedPreferences(activity, String.valueOf(R.string.SessionId), "df6ad070-3529-4567-a460-c234e0ead214");
                 SharedPreferences SP = Cryptography.getEncryptedSharedPreferences(activity);
 
+                System.out.println(Cryptography.getFromSharedPreferences(activity, String.valueOf(R.string.SessionId)));
                 // Setup URL connection.
                 String newUrl = master_server + strings[0];
                 URL url = new URL(newUrl);
@@ -343,6 +344,8 @@ final public class ServerConnection {
             StringBuffer data = new StringBuffer("");
 
             try {
+                Cryptography.addToSharedPreferences(activity, String.valueOf(R.string.SessionId), "05480a28-74ae-40e5-a912-731564c232bf");
+                Cryptography.updateSharedPreferences(activity, String.valueOf(R.string.SessionId), "df6ad070-3529-4567-a460-c234e0ead214");
                 SharedPreferences SP = Cryptography.getEncryptedSharedPreferences(activity);
 
                 // Setup URL connection.

@@ -15,6 +15,7 @@ import com.example.vroomrr.Car;
 import com.example.vroomrr.R;
 import com.example.vroomrr.ServerCallback;
 import com.example.vroomrr.ServerConnection;
+import com.example.vroomrr.User;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -30,19 +31,14 @@ public class CarListFragment extends Fragment implements CarListViewAdapter.OnAc
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_car_list, container, false);
 
-        //todo To remove later on
-        cars.add(new Car("1","1", "1",0,0, "volvo", "v70"));
-        cars.add(new Car("2","2", "2",0,0,"volvo", "v70"));
-        cars.add(new Car("3","3", "3",0,0,"volvo", "v70"));
-        cars.add(new Car("4","4", "4",0,0,"volvo", "v70"));
-
-        ServerConnection.getCars(this, getActivity());
+        ServerConnection.getCars(new User(), this, getActivity());
 
         // Build RecyclerView and set Adapter
         recyclerView = root.findViewById(R.id.car_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
         recyclerView.setAdapter(new CarListViewAdapter(this.getContext(), this, cars));
         this.adapter = (CarListViewAdapter) recyclerView.getAdapter();
+
 
         return root;
     }
@@ -73,6 +69,7 @@ public class CarListFragment extends Fragment implements CarListViewAdapter.OnAc
     @Override
     public void completionHandler(String object, String url) {
         this.cars = new Gson().fromJson(object, new TypeToken<ArrayList<Car>>(){}.getType());
+        System.out.println("All cars:" + cars.get(0).toString());
         this.adapter.updateData(cars);
     }
 }
