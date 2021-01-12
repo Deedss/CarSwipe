@@ -57,8 +57,9 @@ final public class ServerConnection {
      * Register a new User
      * @param user User to add
      */
-    public void register(User user){
-
+    public static void register(User user, ServerCallback callback, Activity activity){
+        PostAsync task = new PostAsync(new Gson().toJson(user), callback, activity);
+        task.execute("register");
     }
 
     public static void login(User user, ServerCallback callback, Activity activity){
