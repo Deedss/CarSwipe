@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.vroomrr.Cryptography;
 import com.example.vroomrr.R;
 import com.example.vroomrr.ServerCallback;
 import com.example.vroomrr.ServerConnection;
@@ -45,11 +46,18 @@ public class RegisterActivity extends AppCompatActivity implements ServerCallbac
             public void onClick(View v) {
                 User userObject = new User();
 
+
+
                 if(!nameTxt.getText().toString().equals("") && !usernameTxt.getText().toString().equals("") && !passwordTxt.getText().toString().equals("")) {
                     userObject.setName(nameTxt.getText().toString());
                     userObject.setUsername(usernameTxt.getText().toString());
                     userObject.setPassword(passwordTxt.getText().toString());
-
+                    try {
+                        Cryptography.generateKeyPair();
+                        userObject.setPublicKey(Cryptography.getPublicKey().toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     registerUser(userObject);
                 } else {
                     //TODO: Error Handling

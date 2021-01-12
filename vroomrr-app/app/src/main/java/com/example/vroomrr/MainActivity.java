@@ -2,7 +2,6 @@ package com.example.vroomrr;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
@@ -31,33 +30,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        checkSession();
 
         setupToolbar();
         setupNavigationDrawer();
 
-//        // TODO to move to login and send public key to server.
-//        try {
-//            Cryptography.generateKeyPair();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
-        if(false) {
+        if(!Cryptography.getEncryptedSharedPreferences(this).contains(String.valueOf(R.string.SessionId))) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             this.finish();
         }
 
         checkAndRequestPermissions();
-    }
-
-    /**
-     * Check if a session is already active, if not start anew.
-     * //todo Maybe place in LoginFragment --> To Discuss with Nick.
-     */
-    private void checkSession() {
-        SharedPreferences SP = Cryptography.getEncryptedSharedPreferences(this);
     }
 
     @Override

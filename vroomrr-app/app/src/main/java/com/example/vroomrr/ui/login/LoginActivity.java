@@ -28,7 +28,6 @@ public class LoginActivity extends AppCompatActivity implements ServerCallback {
     private TextView registerTxt;
     private Gson gson;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,8 +83,12 @@ public class LoginActivity extends AppCompatActivity implements ServerCallback {
     public void completionHandler(String object, String url) {
         Session session = gson.fromJson(object, Session.class);
 
-        //TODO: Save session
-        Cryptography.addToSharedPreferences(this, String.valueOf(R.string.SessionId), session.getSession_id());
+        // Check if key exists in the value
+        if(Cryptography.getEncryptedSharedPreferences(this).contains(String.valueOf(R.string.SessionId))){
+            Cryptography.updateSharedPreferences(this, String.valueOf(R.string.SessionId), session.getSession_id());
+        } else {
+            Cryptography.addToSharedPreferences(this, String.valueOf(R.string.SessionId), session.getSession_id());
+        }
 
         //TODO: Error Handling
         Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();

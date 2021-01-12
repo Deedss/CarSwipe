@@ -36,7 +36,7 @@ final public class Cryptography {
         KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
         keyStore.load(null);
 
-        if(!keyStore.containsAlias(alias)){
+        if (!keyStore.containsAlias(alias)) {
             // Generate KeyPairGenerator with a 2048 bit integer.
             KeyPairGenerator kpg = KeyPairGenerator.getInstance(
                     KeyProperties.KEY_ALGORITHM_RSA, "AndroidKeyStore");
@@ -53,22 +53,6 @@ final public class Cryptography {
         } else {
             Log.d("generateKeyPair:", "Key already exists");
         }
-
-        //todo Remove Testing function
-        printKeysForTesting();
-    }
-
-    /**
-     * TESTING FUNCTION ONLY
-     * @throws Exception
-     */
-    private static void printKeysForTesting() throws Exception{
-        String test = "Hello World";
-        String encrypted = encrypt(test);
-        Log.d("TestMessage Encrypted: ", encrypted);
-        String decrypted = decrypt(encrypted);
-        Log.d("TestMessage Decrypted: ", decrypted);
-        Log.d("Finished", "Finished");
     }
 
     /**
@@ -179,7 +163,7 @@ final public class Cryptography {
             editor.apply();
         }
     }
-
+    
     /**
      * Get the value with the specific Key.
      * @param context the Context of the SharedPreferences
