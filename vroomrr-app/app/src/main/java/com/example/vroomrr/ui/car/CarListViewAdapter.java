@@ -1,6 +1,7 @@
 package com.example.vroomrr.ui.car;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,13 +21,15 @@ import java.util.ArrayList;
 
 public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.CarListViewHolder>{
     private ArrayList<Car> cars;
+    private ArrayList<Bitmap> images;
     private Context context;
     private OnActionListener mListener;
 
-    public CarListViewAdapter(Context context, OnActionListener listener, ArrayList<Car> cars) {
+    public CarListViewAdapter(Context context, OnActionListener listener, ArrayList<Car> cars, ArrayList<Bitmap> images) {
         this.context = context;
         this.mListener = listener;
         this.cars = cars;
+        this.images = images;
     }
 
     @NonNull
@@ -37,14 +40,23 @@ public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull final CarListViewHolder holder, final int position) {
-//        holder.car_image.setImageResource(cars.get(position).getImageResource());
-//        holder.car_name.setText(cars.get(position).getName());
-//        holder.car_license.setText(cars.get(position).getLicense());
+//        holder.car_image.setImageBitmap(images.get(position));
+        holder.car_name.setText(cars.get(position).getType());
+        holder.car_license.setText(cars.get(position).getLicense_plate());
     }
 
     @Override
     public int getItemCount() {
         return cars.size();
+    }
+
+    /**
+     * Update the car ArrayList
+     * @param cars ArrayList to replace current one with.
+     */
+    public void updateData(ArrayList<Car> cars){
+        this.cars = cars;
+        notifyDataSetChanged();
     }
 
     /**
@@ -80,6 +92,7 @@ public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.
             car_deletebtn.setOnClickListener(this);
             car_row_clickable.setOnClickListener(this);
             car_image.setOnClickListener(this);
+
         }
 
         @Override

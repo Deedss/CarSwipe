@@ -1,7 +1,7 @@
 package com.example.vroomrr;
 
 import android.Manifest;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
@@ -15,6 +15,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.vroomrr.ui.login.LoginActivity;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
@@ -29,26 +30,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        checkSession();
 
         setupToolbar();
         setupNavigationDrawer();
 
-//        // TODO to move to login and send public key to server.
-//        try {
-//            Cryptography.generateKeyPair();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-        checkAndRequestPermissions();
-    }
+        if(!Cryptography.getEncryptedSharedPreferences(this).contains(String.valueOf(R.string.SessionId))) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            this.finish();
+        }
 
-    /**
-     * Check if a session is already active, if not start anew.
-     * //todo Maybe place in LoginFragment --> To Discuss with Nick.
-     */
-    private void checkSession() {
-        SharedPreferences SP = Cryptography.getEncryptedSharedPreferences(this);
+        checkAndRequestPermissions();
     }
 
     @Override

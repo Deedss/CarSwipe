@@ -9,12 +9,15 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.vroomrr.Car;
 import com.example.vroomrr.R;
+import com.example.vroomrr.ServerCallback;
+import com.example.vroomrr.ServerConnection;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -65,11 +68,10 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
      * This function is used to easily update all items in the Car object.
      */
     private void insertCarData() {
-        // Fill TextView from Car object
         car_licenseplate.setText(car.getLicense_plate());
         car_brand.setText(car.getBrand());
         car_model.setText(car.getType());
-        car_mileage.setText(String.valueOf(car.getBuild_year()));
+        car_mileage.setText(car.getBuild_year());
     }
 
     @Override
@@ -78,8 +80,17 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
             selectImage();
         }
         if(v == car_save){
-
+            updateCar();
         }
+    }
+
+    private void updateCar() {
+        ServerConnection.updateCar(car, new ServerCallback() {
+            @Override
+            public void completionHandler(String object, String url) {
+                Toast.makeText(getApplicationContext(), "Updated", Toast.LENGTH_SHORT).show();
+            }
+        }, this);
     }
 
     /**
@@ -111,6 +122,8 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
                     e.printStackTrace();
                 }
                 car_imageView.setImageBitmap(bitmapImage);
+                //TODO upload image.
+//                addImageToServer();
             }
         }
     }

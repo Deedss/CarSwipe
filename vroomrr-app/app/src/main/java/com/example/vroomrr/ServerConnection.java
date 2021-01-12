@@ -2,12 +2,10 @@ package com.example.vroomrr;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Base64;
 
 import com.google.gson.Gson;
 
@@ -17,7 +15,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -63,8 +61,7 @@ final public class ServerConnection {
     }
 
     public static void login(User user, ServerCallback callback, Activity activity){
-        Gson gson = new Gson();
-        PostAsync task = new PostAsync(gson.toJson(user), callback, activity);
+        PostAsync task = new PostAsync(new Gson().toJson(user), callback, activity);
         task.execute("login");
     }
 
@@ -123,14 +120,12 @@ final public class ServerConnection {
      * @param activity The activity to return results to
      */
     public static void addCar(String licenseplate, ServerCallback callback, Activity activity){
-        Gson gson = new Gson();
-        PostAsync task = new PostAsync(licenseplate, callback, activity);
-        task.execute("cars/add/");
+        GetAsync task = new GetAsync(callback, activity);
+        task.execute("cars/add/" + licenseplate);
     }
 
     public static void deleteCar(Car car, ServerCallback callback, Activity activity){
-        Gson gson = new Gson();
-        PostAsync task = new PostAsync(car.getLicense_plate(), callback, activity);
+        PostAsync task = new PostAsync(new Gson().toJson(car), callback, activity);
         task.execute("cars/delete");
     }
 
@@ -141,9 +136,8 @@ final public class ServerConnection {
      * @param activity the activity from where function is called.
      */
     public static void updateCar(Car car, ServerCallback callback, Activity activity) {
-        Gson gson = new Gson();
-        PostAsync task = new PostAsync(gson.toJson(car), callback, activity);
-        task.execute("cars/update/");
+        PostAsync task = new PostAsync(new Gson().toJson(car), callback, activity);
+        task.execute("cars/update");
     }
 
     /**
@@ -153,9 +147,8 @@ final public class ServerConnection {
      * @param activity The activity to return results to
      */
     public static void getCarImage(Car car, ServerCallback callback, Activity activity){
-        Gson gson = new Gson();
         GetAsync task = new GetAsync(callback, activity);
-        task.execute("cars/image/" + car.getLicense_plate());
+        task.execute("cars/image/" + new Gson().toJson(car));
     }
 
     /**
@@ -165,8 +158,7 @@ final public class ServerConnection {
      * @param activity The activity to return results to
      */
     public static void getCarImages(Car car, ServerCallback callback, Activity activity){
-        Gson gson = new Gson();
-        PostAsync task = new PostAsync(new Gson().toJson(car), callback, activity);
+        PostAsync task = new PostAsync(new Gson().toJson(car) ,callback, activity);
         task.execute("cars/images");
     }
 
@@ -177,8 +169,7 @@ final public class ServerConnection {
      * @param activity The activity to return results to
      */
     public static void addCarImage(Car car, ServerCallback callback, Activity activity){
-        Gson gson = new Gson();
-        PostAsync task = new PostAsync(car.getLicense_plate(), callback, activity);
+        PostAsync task = new PostAsync(new Gson().toJson(car), callback, activity);
         task.execute("cars/image/add");
     }
 
@@ -189,8 +180,7 @@ final public class ServerConnection {
      * @param activity The activity to return results to
      */
     public static void deleteCarImage(Car car, ServerCallback callback, Activity activity){
-        Gson gson = new Gson();
-        PostAsync task = new PostAsync(car.getLicense_plate(), callback, activity);
+        PostAsync task = new PostAsync(new Gson().toJson(car), callback, activity);
         task.execute("cars/image/delete");
     }
 
@@ -227,41 +217,23 @@ final public class ServerConnection {
         return publicKey;
     }
 
-    /**
-     * Encode an image to a Base64 to send it to the server.
-     * @param bitmap , bitmap image to send
-     * @param context , Context of where to get the resources.
-     * @return , return a Base64 string.
-     */
-    public static String encodeToBase64(Bitmap bitmap, Context context){
-        //encode image to base64 string
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] imageBytes = baos.toByteArray();
-        return Base64.encodeToString(imageBytes, Base64.DEFAULT);
-    }
-
-    /**
-     * Return a bitmap of the base64 encoded image
-     * @param string , Base64 encoded string
-     * @param context , Context of the image.
-     * @return , return Bitmap value.
-     */
-    public static Bitmap decodeToBitmap(String string, Context context){
-        //decode base64 string to image
-        byte[] imageBytes = Base64.decode(string, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-    }
-
-    private boolean checkJSON(String jsonString) throws JSONException {
-        Object json = new JSONTokener(jsonString).nextValue();
-        if (json instanceof JSONObject){
-            return true;
+    public static class GetImageFromUrl extends AsyncTask<String, Void, Bitmap>{
+        public GetImageFromUrl(){
         }
-        else if (json instanceof JSONArray){
-            return false;
+
+        @Override
+        protected Bitmap doInBackground(String... url) {
+            String stringUrl = url[0];
+            Bitmap bitmap = null;
+            InputStream inputStream;
+            try {
+                inputStream = new java.net.URL(stringUrl).openStream();
+                bitmap = BitmapFactory.decodeStream(inputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return bitmap;
         }
-        return false;
     }
 
     public static class GetAsync extends AsyncTask<String, Void, Void> {
@@ -308,7 +280,6 @@ final public class ServerConnection {
 
                 final String returnData = data.toString();
 
-                System.out.println(returnData);
                 // Do the callback
                 activity.runOnUiThread(new Runnable() {
                     public void run(){
