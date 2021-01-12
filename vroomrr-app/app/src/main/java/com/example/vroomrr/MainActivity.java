@@ -38,14 +38,13 @@ public class MainActivity extends AppCompatActivity {
 
         setupToolbar();
         setupNavigationDrawer();
-
-//        // TODO to move to login and send public key to server.
-//        try {
-//            Cryptography.generateKeyPair();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
+        
+        //TODO to move to login and send public key to server.
+        try {
+            Cryptography.generateKeyPair();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if(!checkSession()) {
             Intent intent = new Intent(this, LoginActivity.class);
@@ -111,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean checkSession() {
         //TODO: Check Session
-        return true;
+        return false;
     }
 
 }

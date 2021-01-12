@@ -8,7 +8,7 @@ class Session(db.Model):
 	session_id: str
 	user_id: str
 	time: str
-    
+
 	session_id = db.Column(db.String(64), primary_key=True)
 	user_id = db.Column(db.String(64))
 	time = db.Column(db.String(64))

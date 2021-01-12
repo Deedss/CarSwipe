@@ -65,12 +65,8 @@ public class RegisterActivity extends AppCompatActivity implements ServerCallbac
     }
 
     @Override
-    public void completionHandler(Boolean success, Object object) {
+    public void completionHandler(String object) {
         //TODO: Object Handling.
-        if(!success) {
-            Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(this, "Gebruiker aanmaken is successvol", Toast.LENGTH_LONG).show();
-        }
+        Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();
     }
 }

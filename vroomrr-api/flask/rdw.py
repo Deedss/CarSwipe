@@ -9,9 +9,15 @@ class RDW:
     def getVehicle(self, kenteken):
         # Filters - and makes all letter uppercase for RDW API
         r = requests.get(url=self.SERVER + self.RESOURCE_VOERTUIGEN + '?kenteken=' + kenteken.upper().replace('-', ''))
-        return r.json()[0]
+        try:
+            return r.json()[0]
+        except IndexError:
+            return False
 
     def getVehicleFuel(self, kenteken):
         # Filters - and makes all letter uppercase for RDW API
         r = requests.get(url=self.SERVER + self.RESOURCE_FUEL + '?kenteken=' + kenteken.upper().replace('-', ''))
-        return r.json()[0]
+        try:
+            return r.json()[0]
+        except IndexError:
+            return False

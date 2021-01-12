@@ -85,14 +85,12 @@ public class LoginActivity extends AppCompatActivity implements ServerCallback {
     }
 
     @Override
-    public void completionHandler(Boolean success, Object object) {
-        Session session = gson.fromJson(object.toString(), Session.class);
+    public void completionHandler(String object) {
+        Session session = gson.fromJson(object, Session.class);
 
         //TODO: Save session
 
         //TODO: Error Handling
-        if(!success) {
-            Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();
-        }
+        Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();
     }
 }

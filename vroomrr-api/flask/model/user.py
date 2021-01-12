@@ -10,7 +10,7 @@ class User(db.Model):
 	name: str
 	password: str
 	public_key: str
-    
+
 	user_id = db.Column(db.String(64), primary_key=True)
 	username = db.Column(db.String(64), unique=True)
 	name = db.Column(db.String(64))

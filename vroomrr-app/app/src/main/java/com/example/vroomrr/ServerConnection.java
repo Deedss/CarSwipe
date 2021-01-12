@@ -2,12 +2,22 @@ package com.example.vroomrr;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Base64;
 
 import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -52,8 +62,9 @@ final public class ServerConnection {
         task.execute("register");
     }
 
-    public static void login(User user, ServerCallback callback, Activity activity) {
-        PostAsync task = new PostAsync(new Gson().toJson(user), callback, activity);
+    public static void login(User user, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(gson.toJson(user), callback, activity);
         task.execute("login");
     }
 
@@ -94,25 +105,93 @@ final public class ServerConnection {
     }
 
     /**
-     * Get the information from your car via the RDW api
-     *
-     * @param licenseplate the licensplate of the
-     * @return returns the
+     * Get all cars from a specific user
+     * @param user The User for which to get all cars.
+     * @param callback The callback to return results to
+     * @param activity The activity to return results to
      */
-    public Car getCar(String licenseplate) {
-        Car car = null;
-
-        return car;
+    public static void getCars(User user, ServerCallback callback, Activity activity) {
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(user.getUserId(), callback, activity);
+        task.execute("cars");
     }
 
     /**
-     * Update info on specific car
-     *
-     * @param car  car to update info on
-     * @param info info to add in database
+     * Add a car for a specific user
+     * @param licenseplate The licenseplate for which to add a car.
+     * @param callback The callback to return results to
+     * @param activity The activity to return results to
      */
-    public void updateInfo(Car car, String info) {
+    public static void addCar(String licenseplate, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(licenseplate, callback, activity);
+        task.execute("cars/add/");
+    }
 
+    public static void deleteCar(Car car, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(car.getLicense(), callback, activity);
+        task.execute("cars/delete");
+    }
+
+    /**
+     * Update all information of a car object.
+     * @param car  car to update info on
+     * @param callback Callback implementation
+     * @param activity the activity from where function is called.
+     */
+    public static void updateCar(Car car, ServerCallback callback, Activity activity) {
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(gson.toJson(car), callback, activity);
+        task.execute("cars/update/");
+    }
+
+    /**
+     * Get a specific car Image for a car.
+     * @param car The car to get an image for.
+     * @param callback The callback to return results to
+     * @param activity The activity to return results to
+     */
+    public static void getCarImage(Car car, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(String.valueOf(car.getImageResource()), callback, activity);
+        task.execute("cars/image/");
+    }
+
+    /**
+     * Get all images for a car
+     * @param car The car to get all images for
+     * @param callback The callback to return results to
+     * @param activity The activity to return results to
+     */
+    public static void getCarImages(Car car, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(car.getLicense(), callback, activity);
+        task.execute("cars/images");
+    }
+
+    /**
+     * Add a new image to a specific car.
+     * @param car The car to add new image for
+     * @param callback The callback to return results to
+     * @param activity The activity to return results to
+     */
+    public static void addCarImage(Car car, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(car.getLicense(), callback, activity);
+        task.execute("/cars/image/add");
+    }
+
+    /**
+     * Delete an image for a car.
+     * @param car The car to delete image for
+     * @param callback The callback to return results to
+     * @param activity The activity to return results to
+     */
+    public static void deleteCarImage(Car car, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(car.getLicense(), callback, activity);
+        task.execute("/cars/image/delete");
     }
 
     /**
@@ -148,18 +227,55 @@ final public class ServerConnection {
         return publicKey;
     }
 
+    /**
+     * Encode an image to a Base64 to send it to the server.
+     * @param bitmap , bitmap image to send
+     * @param context , Context of where to get the resources.
+     * @return , return a Base64 string.
+     */
+    public static String encodeToBase64(Bitmap bitmap, Context context){
+        //encode image to base64 string
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        return Base64.encodeToString(imageBytes, Base64.DEFAULT);
+    }
+
+    /**
+     * Return a bitmap of the base64 encoded image
+     * @param string , Base64 encoded string
+     * @param context , Context of the image.
+     * @return , return Bitmap value.
+     */
+    public static Bitmap decodeToBitmap(String string, Context context){
+        //decode base64 string to image
+        byte[] imageBytes = Base64.decode(string, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+    }
+
+    private boolean checkJSON(String jsonString) throws JSONException {
+        Object json = new JSONTokener(jsonString).nextValue();
+        if (json instanceof JSONObject){
+            return true;
+        }
+        else if (json instanceof JSONArray){
+            return false;
+        }
+        return false;
+    }
+
     public static class GetAsync extends AsyncTask<String, Void, Void> {
-        JSONObject postData;
+        String postData;
         ServerCallback callback;
         Activity activity;
 
         // URL information for Server Connections
         //todo Add official master_server
-//    private final String master_server = "grolink.nl/Vroomrr/";
+//    private final String master_server = "https://grolink.nl/";
         private final String master_server = "http://10.0.2.2:5000/";
 
         // This is a constructor that allows you to pass in the JSON body
-        public GetAsync(JSONObject postData, ServerCallback callback, Activity activity) {
+        public GetAsync(String postData, ServerCallback callback, Activity activity) {
             if (postData != null) {
                 this.postData = postData;
                 this.callback = callback;
@@ -172,43 +288,35 @@ final public class ServerConnection {
             StringBuffer data = new StringBuffer("");
 
             try {
+                SharedPreferences SP = Cryptography.getEncryptedSharedPreferences(activity);
+
                 // Setup URL connection.
-                String newUrl = master_server + strings[0];
+                String newUrl = master_server + strings[0] + "/" + postData;
                 URL url = new URL(newUrl);
                 HttpURLConnection connection = (HttpURLConnection)url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setRequestProperty("Content-Type", "application/json; utf-8");
-                connection.setRequestProperty("Accept", "application/json");
-                connection.setDoInput(true);
-                connection.setDoOutput(true);
+                connection.setRequestProperty("session_id", SP.getString("SessionID",""));
+                connection.connect();
 
-                //todo Check if SessionId in SharedPreferences
-                connection.setRequestProperty("session_id", "");
+                InputStream inputStream = connection.getInputStream();
 
-                // Try to write to server.
-                try( OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream())) {
-                    wr.write(postData.toString());
-                    wr.flush();
+                BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
+                String line = "";
+                while ((line = rd.readLine()) != null) {
+                    data.append(line);
                 }
 
-                // Check on successful response
-                if(connection.getResponseCode() == 200) {
-                    InputStream inputStream = connection.getInputStream();
-                    BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
-                    String line = "";
-                    while ((line = rd.readLine()) != null) {
-                        data.append(line);
+                final String returnData = data.toString();
+
+                System.out.println(returnData);
+                // Do the callback
+                activity.runOnUiThread(new Runnable() {
+                    public void run(){
+                        callback.completionHandler(returnData);
                     }
+                });
 
-                    final StringBuffer returnData = data;
-
-                    // Do the callback
-                    activity.runOnUiThread(new Runnable() {
-                        public void run(){
-                            callback.completionHandler(true, returnData);
-                        }
-                    });
-                }
             } catch (Exception e){
                 e.printStackTrace();
             }
@@ -224,7 +332,8 @@ final public class ServerConnection {
 
         // URL information for Server Connections
         //todo Add official master_server
-        private final String master_server = "https://grolink.nl/";
+//    private final String master_server = "https://grolink.nl/";
+        private final String master_server = "http://10.0.2.2:5000/";
 
         // This is a constructor that allows you to pass in the JSON body
         public PostAsync(String postData, ServerCallback callback, Activity activity) {
@@ -240,6 +349,8 @@ final public class ServerConnection {
             StringBuffer data = new StringBuffer("");
 
             try {
+                SharedPreferences SP = Cryptography.getEncryptedSharedPreferences(activity);
+
                 // Setup URL connection.
                 String newUrl = master_server + strings[0];
                 URL url = new URL(newUrl);
@@ -249,10 +360,9 @@ final public class ServerConnection {
                 connection.setRequestProperty("Accept", "application/json");
                 connection.setDoInput(true);
                 connection.setDoOutput(true);
-
-                //todo Check if SessionId in SharedPreferences
-                connection.setRequestProperty("session_id", "");
-
+                if(SP.contains("SessionID")){
+                    connection.setRequestProperty("session_id", SP.getString("SessionID", ""));
+                }
                 // Try to write to server.
                 try( OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream())) {
                     wr.write(postData);
@@ -267,20 +377,20 @@ final public class ServerConnection {
                     data.append(line);
                 }
 
-                final StringBuffer returnData = data;
-
-                System.out.println(returnData);
+                final String returnData = data.toString();
 
                 // Do the callback
                 activity.runOnUiThread(new Runnable() {
                     public void run(){
-                        callback.completionHandler(true, returnData);
+                        callback.completionHandler(returnData);
                     }
                 });
+
             } catch (Exception e){
                 e.printStackTrace();
             }
             return null;
         }
     }
+
 }
