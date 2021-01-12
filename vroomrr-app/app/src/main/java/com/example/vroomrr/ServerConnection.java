@@ -9,6 +9,11 @@ import android.os.AsyncTask;
 
 import com.google.gson.Gson;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,8 +61,7 @@ final public class ServerConnection {
     }
 
     public static void login(User user, ServerCallback callback, Activity activity){
-        Gson gson = new Gson();
-        PostAsync task = new PostAsync(gson.toJson(user), callback, activity);
+        PostAsync task = new PostAsync(new Gson().toJson(user), callback, activity);
         task.execute("login");
     }
 
@@ -67,9 +71,13 @@ final public class ServerConnection {
      * @return Returns an arraylist of Chats.
      */
     public static void getChats(ServerCallback callback, Activity activity) {
-        Gson gson = new Gson();
         GetAsync task = new GetAsync(callback, activity);
         task.execute("chats");
+    }
+    //TODO: Add encryption
+    public static void sendMessageTMP(ServerCallback callback, Activity activity, ChatMessage msg) {
+        PostAsync task = new PostAsync(new Gson().toJson(msg),callback, activity);
+        task.execute("chat/send");
     }
 
     /**
@@ -78,10 +86,9 @@ final public class ServerConnection {
      * @param chat the chat for which to get the messages
      * @return List<String>
      */
-    public List<String> getChatMsgs(Chat chat) {
-        List<String> list = null;
-
-        return list;
+    public static void getChatMsgs(ServerCallback callback, Activity activity, Chat chat) {
+        PostAsync task = new PostAsync(new Gson().toJson(chat),callback, activity);
+        task.execute("chat/messages");
     }
 
     /**
@@ -249,8 +256,11 @@ final public class ServerConnection {
             StringBuffer data = new StringBuffer("");
 
             try {
+                //Cryptography.addToSharedPreferences(activity, String.valueOf(R.string.SessionId), "05480a28-74ae-40e5-a912-731564c232bf");
+                //Cryptography.updateSharedPreferences(activity, String.valueOf(R.string.SessionId), "df6ad070-3529-4567-a460-c234e0ead214");
                 SharedPreferences SP = Cryptography.getEncryptedSharedPreferences(activity);
 
+                //System.out.println(Cryptography.getFromSharedPreferences(activity, String.valueOf(R.string.SessionId)));
                 // Setup URL connection.
                 String newUrl = master_server + strings[0];
                 URL url = new URL(newUrl);
@@ -308,6 +318,8 @@ final public class ServerConnection {
             StringBuffer data = new StringBuffer("");
 
             try {
+                //Cryptography.addToSharedPreferences(activity, String.valueOf(R.string.SessionId), "05480a28-74ae-40e5-a912-731564c232bf");
+                //Cryptography.updateSharedPreferences(activity, String.valueOf(R.string.SessionId), "df6ad070-3529-4567-a460-c234e0ead214");
                 SharedPreferences SP = Cryptography.getEncryptedSharedPreferences(activity);
 
                 // Setup URL connection.

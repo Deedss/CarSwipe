@@ -4,23 +4,43 @@ import java.util.ArrayList;
 
 public class Chat {
 
-    private int chat_imageResource;
-    private String chatId;
-    ArrayList<ChatMessage> messages;
+    private String chat_id;
+    private String user_id1;
+    private String user_id2;
+    private String start;
+
+    //Not filled by API but manually
+    private String name;
+    private String description;
+    private String image;
 
     /**
      * Constructor
      */
-    public Chat(int chat_imageResource, String chatId) {
-        this.chat_imageResource = chat_imageResource;
-        this.chatId = chatId;
-    }
-
-    public int getChat_imageResource() {
-        return chat_imageResource;
+    public Chat(String chat_id, String user_id1, String user_id2, String start) {
+        this.chat_id = chat_id;
+        this.user_id1 = user_id1;
+        this.user_id2 = user_id2;
+        this.start = start;
     }
 
     public String getChatId() {
-        return chatId;
+        return chat_id;
     }
+    public String getUserId1() {
+        return user_id1;
+    }
+    public String getUserId2() {
+        return user_id2;
+    }
+    public String getStart() {
+        return start;
+    }
+
+    public String getImage() { return image;}
+    public void setName(String n) { name = n;}
+    public void setImage(String n) { image = n;}
+    public String getName() { return name;}
+    public void setDescription(String n) { description = n;}
+    public String getDescription() { return description;}
 }

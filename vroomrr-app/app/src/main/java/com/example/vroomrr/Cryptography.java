@@ -163,7 +163,7 @@ final public class Cryptography {
             editor.apply();
         }
     }
-    
+
     /**
      * Get the value with the specific Key.
      * @param context the Context of the SharedPreferences
