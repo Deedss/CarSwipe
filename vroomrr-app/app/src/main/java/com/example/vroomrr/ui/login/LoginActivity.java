@@ -1,45 +1,52 @@
 package com.example.vroomrr.ui.login;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.vroomrr.Cryptography;
+import com.example.vroomrr.MainActivity;
 import com.example.vroomrr.R;
 import com.example.vroomrr.ServerCallback;
 import com.example.vroomrr.ServerConnection;
 import com.example.vroomrr.Session;
 import com.example.vroomrr.User;
+import com.example.vroomrr.ui.register.RegisterActivity;
 import com.google.gson.Gson;
 
-public class LoginFragment extends Fragment implements ServerCallback {
-    private View root;
+public class LoginActivity extends AppCompatActivity implements ServerCallback {
     private Button btn;
-    private TextView usernameTxt;
-    private TextView passwordTxt;
+    private EditText usernameTxt;
+    private EditText passwordTxt;
+    private TextView registerTxt;
     private Gson gson;
 
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        root = inflater.inflate(R.layout.fragment_login, container, false);
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_login);
 
         setupView();
         setOnclickListeners();
-
-        return root;
-
     }
 
     public void setupView() {
-        btn = root.findViewById(R.id.button_login);
-        usernameTxt = root.findViewById(R.id.username_login);
-        passwordTxt = root.findViewById(R.id.password_login);
+        btn = findViewById(R.id.button_login);
+        usernameTxt = findViewById(R.id.username_login);
+        passwordTxt = findViewById(R.id.password_login);
+        registerTxt = findViewById(R.id.register_text);
         gson = new Gson();
     }
 
@@ -60,19 +67,32 @@ public class LoginFragment extends Fragment implements ServerCallback {
                 }
             }
         });
+
+        registerTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     public void loginUser(User body) {
-        ServerConnection.login(body, this, getActivity());
+        ServerConnection.login(body, this, this);
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        this.finish();
     }
 
     @Override
     public void completionHandler(Boolean success, Object object) {
         Session session = gson.fromJson(object.toString(), Session.class);
 
-        //TODO: Show error if there.
+        //TODO: Save session
+
+        //TODO: Error Handling
         if(!success) {
-            Toast.makeText(this.getActivity(), "Error", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();
         }
     }
 }
