@@ -8,7 +8,11 @@ public class Chat {
     private String user_id1;
     private String user_id2;
     private String start;
-    //ArrayList<ChatMessage> messages;
+
+    //Not filled by API but manually
+    private String name;
+    private String description;
+    private String image;
 
     /**
      * Constructor
@@ -32,4 +36,11 @@ public class Chat {
     public String getStart() {
         return start;
     }
+
+    public String getImage() { return image;}
+    public void setName(String n) { name = n;}
+    public void setImage(String n) { image = n;}
+    public String getName() { return name;}
+    public void setDescription(String n) { description = n;}
+    public String getDescription() { return description;}
 }

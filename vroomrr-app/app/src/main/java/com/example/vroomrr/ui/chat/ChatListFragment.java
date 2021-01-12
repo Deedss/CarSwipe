@@ -34,23 +34,25 @@ public class ChatListFragment extends Fragment implements ChatListViewAdapter.On
     private ArrayList<Chat> chats = new ArrayList<>();
     private ChatListViewAdapter adapter;
 
+    private String currentUserID;
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //TODO: Add actual logged in user here from main
 
         SharedPreferences SP = Cryptography.getEncryptedSharedPreferences(this.getActivity());
         SharedPreferences.Editor editor = SP.edit();
-        editor.putString("SessionID","cbd229d6-3764-4897-8882-8d017b0ec6c6");
+        editor.putString(String.valueOf(R.string.SessionId),"c396a4f5-3fa5-4e67-b6fa-75aa8cf23c27");
         editor.apply();
+        currentUserID = "47b6b871-26ce-43f3-9dc0-17a6ccb0505a";
+
         //TODO: Remove this garbage
 
         ServerConnection.getChats(this, this.getActivity());
 
-        root = inflater.inflate(R.layout.fragment_car_list, container, false);
-
-        //chats.add(new Chat("1","1", "1","2020"));
+        root = inflater.inflate(R.layout.fragment_chat, container, false);
 
         // Build RecyclerView and set Adapter
-        recyclerView = root.findViewById(R.id.car_recyclerview);
+        recyclerView = root.findViewById(R.id.chat_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
         this.adapter = new ChatListViewAdapter(this.getContext(), this, chats);
         recyclerView.setAdapter(this.adapter);
@@ -61,14 +63,37 @@ public class ChatListFragment extends Fragment implements ChatListViewAdapter.On
     @Override
     public void openChat(int adapterPosition) {
         Intent intent = new Intent(getActivity(), ChatActivity.class);
-        intent.putExtra("chat_info", new Gson().toJson(chats.get(adapterPosition)));
+        intent.putExtra("chat", new Gson().toJson(chats.get(adapterPosition)));
         getActivity().startActivity(intent);
     }
 
     @Override
-    public void completionHandler(Boolean success, String object) {
+    public void completionHandler(String object, String url) {
         this.chats = new Gson().fromJson(object, new TypeToken<ArrayList<Chat>>(){}.getType());
-        Log.e("Oh lordy", this.chats.get(0).getChatId());
+        for(final Chat c : this.chats){
+            User u = new User();
+            if(c.getUserId1().equals(currentUserID)){
+                u.setUserId(c.getUserId2());
+            }else{
+                    u.setUserId(c.getUserId1());
+            }
+
+            // Get default selected car for every chat user
+            ServerConnection.getCars(u, new ServerCallback() {
+                @Override
+                public void completionHandler(String object, String url) {
+                    ArrayList<Car> cars = new Gson().fromJson(object, new TypeToken<ArrayList<Car>>(){}.getType());
+                    for(Car car : cars){
+                        if(car.isSelected()){
+                            c.setName(car.getBrand() + " " +car.getType() + " - " + car.getLicense_plate());
+                            c.setDescription("Matched on " + c.getStart());
+                            chats.set(chats.indexOf(c), c);
+                            adapter.updateData(chats);
+                        }
+                    }
+                }
+            }, this.getActivity());
+        }
         this.adapter.updateData(this.chats);
     }
 }

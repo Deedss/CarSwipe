@@ -27,10 +27,7 @@ public class CarListFragment extends Fragment implements CarListViewAdapter.OnAc
         root = inflater.inflate(R.layout.fragment_car_list, container, false);
 
         //todo To remove later on
-        cars.add(new Car("1","1", "1",0,0, "volvo", "v70"));
-        cars.add(new Car("2","2", "2",0,0,"volvo", "v70"));
-        cars.add(new Car("3","3", "3",0,0,"volvo", "v70"));
-        cars.add(new Car("4","4", "4",0,0,"volvo", "v70"));
+        
 
         // Build RecyclerView and set Adapter
         recyclerView = root.findViewById(R.id.car_recyclerview);

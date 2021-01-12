@@ -66,10 +66,10 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
      */
     private void insertCarData() {
         // Fill TextView from Car object
-        car_licenseplate.setText(car.getLicense());
+        car_licenseplate.setText(car.getLicense_plate());
         car_brand.setText(car.getBrand());
-        car_model.setText(car.getModel());
-        car_mileage.setText(String.valueOf(car.getMileage()));
+        car_model.setText(car.getType());
+        car_mileage.setText(String.valueOf(car.getBuild_year()));
     }
 
     @Override

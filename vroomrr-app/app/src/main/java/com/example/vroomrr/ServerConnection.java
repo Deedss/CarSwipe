@@ -11,6 +11,11 @@ import android.util.Base64;
 
 import com.google.gson.Gson;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -52,8 +57,9 @@ final public class ServerConnection {
      * Register a new User
      * @param user User to add
      */
-    public void register(User user){
-
+    public static void register(User user, ServerCallback callback, Activity activity){
+        PostAsync task = new PostAsync(new Gson().toJson(user), callback, activity);
+        task.execute("register");
     }
 
     public static void login(User user, ServerCallback callback, Activity activity){
@@ -68,9 +74,13 @@ final public class ServerConnection {
      * @return Returns an arraylist of Chats.
      */
     public static void getChats(ServerCallback callback, Activity activity) {
-        Gson gson = new Gson();
         GetAsync task = new GetAsync(callback, activity);
         task.execute("chats");
+    }
+    //TODO: Add encryption
+    public static void sendMessageTMP(ServerCallback callback, Activity activity, ChatMessage msg) {
+        PostAsync task = new PostAsync(new Gson().toJson(msg),callback, activity);
+        task.execute("chat/send");
     }
 
     /**
@@ -79,10 +89,9 @@ final public class ServerConnection {
      * @param chat the chat for which to get the messages
      * @return List<String>
      */
-    public List<String> getChatMsgs(Chat chat) {
-        List<String> list = null;
-
-        return list;
+    public static void getChatMsgs(ServerCallback callback, Activity activity, Chat chat) {
+        PostAsync task = new PostAsync(new Gson().toJson(chat),callback, activity);
+        task.execute("chat/messages");
     }
 
     /**
@@ -98,31 +107,91 @@ final public class ServerConnection {
     }
 
     /**
-     * Get the information from your car via the RDW api
-     *
-     * @param licenseplate the licensplate of the
-     * @return returns the
+     * Get all cars from a specific user
+     * @param callback The callback to return results to
+     * @param activity The activity to return results to
      */
-    public Car getCar(String licenseplate) {
-        Car car = null;
-
-        return car;
-    }
-
-    public static void addCar(String licenseplate, ServerCallback callback, Activity activity){
-        Gson gson = new Gson();
-        GetAsync task = new GetAsync(callback, activity);
-        task.execute("cars/add/"+licenseplate);
+    public static void getCars(User user, ServerCallback callback, Activity activity) {
+        PostAsync task = new PostAsync(new Gson().toJson(user), callback, activity);
+        task.execute("cars");
     }
 
     /**
-     * Update info on specific car
-     *
-     * @param car  car to update info on
-     * @param info info to add in database
+     * Add a car for a specific user
+     * @param licenseplate The licenseplate for which to add a car.
+     * @param callback The callback to return results to
+     * @param activity The activity to return results to
      */
-    public void updateInfo(Car car, String info) {
+    public static void addCar(String licenseplate, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(licenseplate, callback, activity);
+        task.execute("cars/add/");
+    }
 
+    public static void deleteCar(Car car, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(car.getLicense_plate(), callback, activity);
+        task.execute("cars/delete");
+    }
+
+    /**
+     * Update all information of a car object.
+     * @param car  car to update info on
+     * @param callback Callback implementation
+     * @param activity the activity from where function is called.
+     */
+    public static void updateCar(Car car, ServerCallback callback, Activity activity) {
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(gson.toJson(car), callback, activity);
+        task.execute("cars/update/");
+    }
+
+    /**
+     * Get a specific car Image for a car.
+     * @param car The car to get an image for.
+     * @param callback The callback to return results to
+     * @param activity The activity to return results to
+     */
+    public static void getCarImage(Car car, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        GetAsync task = new GetAsync(callback, activity);
+        task.execute("cars/image/" + car.getLicense_plate());
+    }
+
+    /**
+     * Get all images for a car
+     * @param car The car to get all images for
+     * @param callback The callback to return results to
+     * @param activity The activity to return results to
+     */
+    public static void getCarImages(Car car, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(new Gson().toJson(car), callback, activity);
+        task.execute("cars/images");
+    }
+
+    /**
+     * Add a new image to a specific car.
+     * @param car The car to add new image for
+     * @param callback The callback to return results to
+     * @param activity The activity to return results to
+     */
+    public static void addCarImage(Car car, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(car.getLicense_plate(), callback, activity);
+        task.execute("cars/image/add");
+    }
+
+    /**
+     * Delete an image for a car.
+     * @param car The car to delete image for
+     * @param callback The callback to return results to
+     * @param activity The activity to return results to
+     */
+    public static void deleteCarImage(Car car, ServerCallback callback, Activity activity){
+        Gson gson = new Gson();
+        PostAsync task = new PostAsync(car.getLicense_plate(), callback, activity);
+        task.execute("cars/image/delete");
     }
 
     /**
@@ -184,14 +253,25 @@ final public class ServerConnection {
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
     }
 
+    private boolean checkJSON(String jsonString) throws JSONException {
+        Object json = new JSONTokener(jsonString).nextValue();
+        if (json instanceof JSONObject){
+            return true;
+        }
+        else if (json instanceof JSONArray){
+            return false;
+        }
+        return false;
+    }
+
     public static class GetAsync extends AsyncTask<String, Void, Void> {
         ServerCallback callback;
+        @SuppressLint("StaticFieldLeak")
         Activity activity;
 
         // URL information for Server Connections
-        //todo Add official master_server
         private final String master_server = "https://grolink.nl/";
-        //private final String master_server = "http://10.0.2.2:5000/";
+//        private final String master_server = "http://10.0.2.2:5000/";
 
         // This is a constructor that allows you to pass in the JSON body
         public GetAsync(ServerCallback callback, Activity activity) {
@@ -200,19 +280,22 @@ final public class ServerConnection {
         }
 
         @Override
-        protected Void doInBackground(String... strings) {
+        protected Void doInBackground(final String... strings) {
             StringBuffer data = new StringBuffer("");
 
             try {
+                //Cryptography.addToSharedPreferences(activity, String.valueOf(R.string.SessionId), "05480a28-74ae-40e5-a912-731564c232bf");
+                //Cryptography.updateSharedPreferences(activity, String.valueOf(R.string.SessionId), "df6ad070-3529-4567-a460-c234e0ead214");
                 SharedPreferences SP = Cryptography.getEncryptedSharedPreferences(activity);
 
+                //System.out.println(Cryptography.getFromSharedPreferences(activity, String.valueOf(R.string.SessionId)));
                 // Setup URL connection.
                 String newUrl = master_server + strings[0];
                 URL url = new URL(newUrl);
                 HttpURLConnection connection = (HttpURLConnection)url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setRequestProperty("Content-Type", "application/json; utf-8");
-                connection.setRequestProperty("Session-Id", SP.getString("SessionID",""));
+                connection.setRequestProperty("Session-Id", SP.getString(String.valueOf(R.string.SessionId),""));
                 connection.connect();
 
                 InputStream inputStream = connection.getInputStream();
@@ -229,7 +312,7 @@ final public class ServerConnection {
                 // Do the callback
                 activity.runOnUiThread(new Runnable() {
                     public void run(){
-                        callback.completionHandler(true, returnData);
+                        callback.completionHandler(returnData, strings[0]);
                     }
                 });
 
@@ -247,9 +330,8 @@ final public class ServerConnection {
         Activity activity;
 
         // URL information for Server Connections
-        //todo Add official master_server
         private final String master_server = "https://grolink.nl/";
-        //private final String master_server = "http://10.0.2.2:5000/";
+//        private final String master_server = "http://10.0.2.2:5000/";
 
         // This is a constructor that allows you to pass in the JSON body
         public PostAsync(String postData, ServerCallback callback, Activity activity) {
@@ -261,10 +343,12 @@ final public class ServerConnection {
         }
 
         @Override
-        protected Void doInBackground(String... strings) {
+        protected Void doInBackground(final String... strings) {
             StringBuffer data = new StringBuffer("");
 
             try {
+                //Cryptography.addToSharedPreferences(activity, String.valueOf(R.string.SessionId), "05480a28-74ae-40e5-a912-731564c232bf");
+                //Cryptography.updateSharedPreferences(activity, String.valueOf(R.string.SessionId), "df6ad070-3529-4567-a460-c234e0ead214");
                 SharedPreferences SP = Cryptography.getEncryptedSharedPreferences(activity);
 
                 // Setup URL connection.
@@ -276,8 +360,8 @@ final public class ServerConnection {
                 connection.setRequestProperty("Accept", "application/json");
                 connection.setDoInput(true);
                 connection.setDoOutput(true);
-                if(SP.contains("SessionID")){
-                    connection.setRequestProperty("Session-Id", SP.getString("SessionID", ""));
+                if(SP.contains(String.valueOf(R.string.SessionId))){
+                    connection.setRequestProperty("Session-Id", SP.getString(String.valueOf(R.string.SessionId), ""));
                 }
                 // Try to write to server.
                 try( OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream())) {
@@ -298,7 +382,7 @@ final public class ServerConnection {
                 // Do the callback
                 activity.runOnUiThread(new Runnable() {
                     public void run(){
-                        callback.completionHandler(true, returnData);
+                        callback.completionHandler(returnData, strings[0]);
                     }
                 });
 

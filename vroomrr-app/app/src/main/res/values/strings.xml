@@ -29,6 +29,7 @@
     <!-- Title Strings -->
 
     <!-- General Strings -->
+    <string name="SessionId">Session-Id</string>
 
     <!-- ImageView ContentDescription String -->
     <string name="car_image">Image of the car</string>

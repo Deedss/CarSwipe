@@ -45,7 +45,8 @@ public class ChatListViewAdapter extends RecyclerView.Adapter<ChatListViewAdapte
     @Override
     public void onBindViewHolder(@NonNull final ChatListViewHolder holder, final int position) {
        // holder.Chat_image.setImageResource(Chats.get(position).getImageResource());
-        holder.Chat_name.setText(Chats.get(position).getChatId());
+        holder.Chat_name.setText(Chats.get(position).getName());
+        holder.Chat_description.setText(Chats.get(position).getDescription());
     }
 
     @Override
@@ -70,11 +71,13 @@ public class ChatListViewAdapter extends RecyclerView.Adapter<ChatListViewAdapte
         // Variables
         ImageView Chat_image;
         TextView Chat_name;
+        TextView Chat_description;
 
         public ChatListViewHolder(@NonNull View itemView) {
             super(itemView);
             this.Chat_image = itemView.findViewById(R.id.chat_image);
             this.Chat_name = itemView.findViewById(R.id.chat_text);
+            this.Chat_description = itemView.findViewById(R.id.chat_text2);
 
             itemView.findViewById(R.id.chat_row).setOnClickListener(this);
         }

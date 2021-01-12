@@ -44,7 +44,7 @@ public class LoginFragment extends Fragment implements ServerCallback {
     }
 
     @Override
-    public void completionHandler(Boolean success, String object) {
+    public void completionHandler(String object, String url) {
 
     }
 }

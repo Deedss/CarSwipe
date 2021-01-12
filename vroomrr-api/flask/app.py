@@ -157,7 +157,7 @@ def sendChatMessage():
 			return jsonify({"error": "This chat does not exist"})
 
 		# Check if user is allowed to send in this chat
-		if chat.user_id1 != user_self.user_id or chat.user_id2 != user_self.user_id:
+		if chat.user_id1 != user_self.user_id and chat.user_id2 != user_self.user_id:
 			return jsonify({"error": "You do not have permission to send messages in this chat"})
 
 		if message.chat_id == '' and message.content == '' and len(message.content) < 1024:
