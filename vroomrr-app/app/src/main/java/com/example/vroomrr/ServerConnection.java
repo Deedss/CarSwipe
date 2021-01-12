@@ -106,13 +106,12 @@ final public class ServerConnection {
 
     /**
      * Get all cars from a specific user
-     * @param user The User for which to get all cars.
      * @param callback The callback to return results to
      * @param activity The activity to return results to
      */
-    public static void getCars(User user, ServerCallback callback, Activity activity) {
+    public static void getCars(ServerCallback callback, Activity activity) {
         Gson gson = new Gson();
-        PostAsync task = new PostAsync(user.getUserId(), callback, activity);
+        GetAsync task = new GetAsync(callback, activity);
         task.execute("cars");
     }
 
@@ -265,38 +264,34 @@ final public class ServerConnection {
     }
 
     public static class GetAsync extends AsyncTask<String, Void, Void> {
-        String postData;
         ServerCallback callback;
+        @SuppressLint("StaticFieldLeak")
         Activity activity;
 
         // URL information for Server Connections
-        //todo Add official master_server
-//    private final String master_server = "https://grolink.nl/";
-        private final String master_server = "http://10.0.2.2:5000/";
+        private final String master_server = "https://grolink.nl/";
+//        private final String master_server = "http://10.0.2.2:5000/";
 
         // This is a constructor that allows you to pass in the JSON body
-        public GetAsync(String postData, ServerCallback callback, Activity activity) {
-            if (postData != null) {
-                this.postData = postData;
-                this.callback = callback;
-                this.activity = activity;
-            }
+        public GetAsync(ServerCallback callback, Activity activity) {
+            this.callback = callback;
+            this.activity = activity;
         }
 
         @Override
-        protected Void doInBackground(String... strings) {
+        protected Void doInBackground(final String... strings) {
             StringBuffer data = new StringBuffer("");
 
             try {
                 SharedPreferences SP = Cryptography.getEncryptedSharedPreferences(activity);
 
                 // Setup URL connection.
-                String newUrl = master_server + strings[0] + "/" + postData;
+                String newUrl = master_server + strings[0];
                 URL url = new URL(newUrl);
                 HttpURLConnection connection = (HttpURLConnection)url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setRequestProperty("Content-Type", "application/json; utf-8");
-                connection.setRequestProperty("session_id", SP.getString("SessionID",""));
+                connection.setRequestProperty("Session-Id", SP.getString(String.valueOf(R.string.SessionId),""));
                 connection.connect();
 
                 InputStream inputStream = connection.getInputStream();
@@ -313,7 +308,7 @@ final public class ServerConnection {
                 // Do the callback
                 activity.runOnUiThread(new Runnable() {
                     public void run(){
-                        callback.completionHandler(returnData);
+                        callback.completionHandler(returnData, strings[0]);
                     }
                 });
 
@@ -331,9 +326,8 @@ final public class ServerConnection {
         Activity activity;
 
         // URL information for Server Connections
-        //todo Add official master_server
-//    private final String master_server = "https://grolink.nl/";
-        private final String master_server = "http://10.0.2.2:5000/";
+        private final String master_server = "https://grolink.nl/";
+//        private final String master_server = "http://10.0.2.2:5000/";
 
         // This is a constructor that allows you to pass in the JSON body
         public PostAsync(String postData, ServerCallback callback, Activity activity) {
@@ -345,7 +339,7 @@ final public class ServerConnection {
         }
 
         @Override
-        protected Void doInBackground(String... strings) {
+        protected Void doInBackground(final String... strings) {
             StringBuffer data = new StringBuffer("");
 
             try {
@@ -360,8 +354,8 @@ final public class ServerConnection {
                 connection.setRequestProperty("Accept", "application/json");
                 connection.setDoInput(true);
                 connection.setDoOutput(true);
-                if(SP.contains("SessionID")){
-                    connection.setRequestProperty("session_id", SP.getString("SessionID", ""));
+                if(SP.contains(String.valueOf(R.string.SessionId))){
+                    connection.setRequestProperty("Session-Id", SP.getString(String.valueOf(R.string.SessionId), ""));
                 }
                 // Try to write to server.
                 try( OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream())) {
@@ -382,7 +376,7 @@ final public class ServerConnection {
                 // Do the callback
                 activity.runOnUiThread(new Runnable() {
                     public void run(){
-                        callback.completionHandler(returnData);
+                        callback.completionHandler(returnData, strings[0]);
                     }
                 });
 

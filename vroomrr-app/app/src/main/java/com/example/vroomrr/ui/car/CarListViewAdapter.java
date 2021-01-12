@@ -47,6 +47,11 @@ public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.
         return cars.size();
     }
 
+    public void updateData(ArrayList<Car> cars){
+        this.cars = cars;
+        notifyDataSetChanged();
+    }
+
     /**
      * Returns the ArrayList with Cars
      * @return ArrayList

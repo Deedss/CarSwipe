@@ -1,6 +1,5 @@
 package com.example.vroomrr.ui.register;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -65,7 +64,7 @@ public class RegisterActivity extends AppCompatActivity implements ServerCallbac
     }
 
     @Override
-    public void completionHandler(String object) {
+    public void completionHandler(String object, String url) {
         //TODO: Object Handling.
         Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();
     }

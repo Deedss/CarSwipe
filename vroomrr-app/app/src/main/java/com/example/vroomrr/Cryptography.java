@@ -164,4 +164,48 @@ final public class Cryptography {
         }
         return prf;
     }
+
+    /**
+     * Insert a new key value pair to the SharedPreferences
+     * @param context the Context of the SharedPreferences
+     * @param key The key for the SharedPreferences
+     * @param value The value to insert
+     */
+    public static void addToSharedPreferences(Context context, String key, String value){
+        SharedPreferences SP = Cryptography.getEncryptedSharedPreferences( context);
+        SharedPreferences.Editor editor = SP.edit();
+        editor.putString(key, value);
+        editor.apply();
+    }
+
+    /**
+     * Get the value with the specific Key.
+     * @param context the Context of the SharedPreferences
+     * @param key The key for the SharedPreferences
+     * @return The value to return
+     */
+    public static String getFromSharedPreferences(Context context, String key){
+        SharedPreferences SP = Cryptography.getEncryptedSharedPreferences( context);
+        if (SP.contains(key)){
+            return SP.getString(key, "");
+        }
+        return "No such key is found";
+    }
+
+    /**
+     * Update the existing value to a key-pair
+     * @param context the Context of the SharedPreferences
+     * @param key The key for the SharedPreferences
+     * @param value The value to insert
+     */
+    public static void updateSharedPreferences(Context context, String key, String value){
+        SharedPreferences SP = Cryptography.getEncryptedSharedPreferences( context);
+        if(SP.contains(key)){
+            SharedPreferences.Editor editor = SP.edit();
+            editor.remove(key);
+            editor.commit();
+            editor.putString(key, value);
+            editor.apply();
+        }
+    }
 }

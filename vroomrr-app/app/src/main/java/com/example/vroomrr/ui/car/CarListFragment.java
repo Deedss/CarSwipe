@@ -13,14 +13,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.vroomrr.Car;
 import com.example.vroomrr.R;
+import com.example.vroomrr.ServerCallback;
+import com.example.vroomrr.ServerConnection;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 
-public class CarListFragment extends Fragment implements CarListViewAdapter.OnActionListener {
+public class CarListFragment extends Fragment implements CarListViewAdapter.OnActionListener, ServerCallback {
     private View root;
     // Add RecyclerView member
     private RecyclerView recyclerView;
+    private CarListViewAdapter adapter;
     private ArrayList<Car> cars = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,24 +36,25 @@ public class CarListFragment extends Fragment implements CarListViewAdapter.OnAc
         cars.add(new Car("3","3", "3",0,0,"volvo", "v70"));
         cars.add(new Car("4","4", "4",0,0,"volvo", "v70"));
 
+        ServerConnection.getCars(this, getActivity());
+
         // Build RecyclerView and set Adapter
         recyclerView = root.findViewById(R.id.car_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
         recyclerView.setAdapter(new CarListViewAdapter(this.getContext(), this, cars));
+        this.adapter = (CarListViewAdapter) recyclerView.getAdapter();
 
         return root;
     }
 
     private ArrayList<Car> getCars(){
-        ArrayList<Car> cars = new ArrayList<>();
-
         return cars;
     }
 
     @Override
     public void deleteCar(int adapterPosition) {
         cars.remove(adapterPosition);
-        recyclerView.getAdapter().notifyDataSetChanged();
+        this.adapter.updateData(cars);
     }
 
     /**
@@ -63,5 +68,11 @@ public class CarListFragment extends Fragment implements CarListViewAdapter.OnAc
         System.out.println(gson.toJson(cars.get(adapterPosition)));
         intent.putExtra("car_info", gson.toJson(cars.get(adapterPosition)));
         getActivity().startActivity(intent);
+    }
+
+    @Override
+    public void completionHandler(String object, String url) {
+        this.cars = new Gson().fromJson(object, new TypeToken<ArrayList<Car>>(){}.getType());
+        this.adapter.updateData(cars);
     }
 }
