@@ -91,7 +91,8 @@ CREATE TABLE `message` (
   `chat_id` varchar(64) NOT NULL,
   `user_id` varchar(64) NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `content` varchar(1028) NOT NULL
+  `content` varchar(1028) NOT NULL,
+  `content_self` varchar(1028) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------

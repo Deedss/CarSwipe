@@ -61,6 +61,9 @@ def login():
 		car_filter = Filter.query.filter_by(user_id=user.user_id).first()
 		if not car_filter:
 			db.session.add(Filter(user_id=user.user_id, build_year_max=9999, build_year_min=1900, fuel_types='', colors='', brands='', horsepower_min=0))
+		# Update Public key for this user after new login
+		User.query.filter(User.user_id == user.user_id).update({User.public_key: tmpuser.public_key})
+
 		db.session.commit()
 		return jsonify(session)
 	else:
@@ -160,7 +163,7 @@ def sendChatMessage():
 		if chat.user_id1 != user_self.user_id and chat.user_id2 != user_self.user_id:
 			return jsonify({"error": "You do not have permission to send messages in this chat"})
 
-		if message.chat_id == '' and message.content == '' and len(message.content) < 1024:
+		if message.chat_id == '' or message.content == '' or message.content_self == '' or len(message.content) < 1024:
 			return jsonify({"error": "Please enter a valid ChatId, UserId with a message content max size 1024 min size 1"})
 		else:
 			message.message_id = str(uuid.uuid4())
@@ -277,7 +280,11 @@ def addCar(kenteken):
 			newcar.build_year = car['datum_eerste_afgifte_nederland']
 			newcar.color = car['eerste_kleur']
 			newcar.fuel_type = car_fuel['brandstof_omschrijving']
-			newcar.selected = False
+			# Check if this car is the first car for this user if so make default
+			if Car.query.filter_by(user_id=user.user_id).first() is None:
+				newcar.selected = True
+			else:
+				newcar.selected = False
 			newcar.type = car['handelsbenaming']
 			newcar.user_id = user.user_id
 			newcar.description = Wikimedia().getDescription(car['merk'] + ' ' + car['handelsbenaming'])

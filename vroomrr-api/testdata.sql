@@ -98,7 +98,6 @@ INSERT INTO `car` (`license_plate`, `user_id`, `brand`, `color`, `type`, `horsep
 INSERT INTO `car` (`license_plate`, `user_id`, `brand`, `color`, `type`, `horsepower`, `build_year`, `fuel_type`, `selected`) VALUES ('97-uas-41', 'b78adaff-f2c3-30a9-8d62-01a04a29721e', ' Citroën', 'LightCyan', ' Malibu', 514, 1990, 'elektriciteit', true);
 INSERT INTO `car` (`license_plate`, `user_id`, `brand`, `color`, `type`, `horsepower`, `build_year`, `fuel_type`, `selected`) VALUES ('98-mtp-80', '083c4714-07bc-31ec-bf31-62fcbc10c4ec', ' Aston Martin', 'DimGray', ' Windstar', 201, 1975, 'diesel', true);
 INSERT INTO `car` (`license_plate`, `user_id`, `brand`, `color`, `type`, `horsepower`, `build_year`, `fuel_type`, `selected`) VALUES ('99-fho-31', '2c06f9e8-e621-38a4-913c-011ac4b66075', ' Nissan', 'Chartreuse', ' Escalade EXT', 285, 1988, 'lpg', true);
-INSERT INTO `car` (`license_plate`, `user_id`, `brand`, `color`, `type`, `horsepower`, `build_year`, `fuel_type`, `selected`) VALUES ('49jfgv', '47b6b871-26ce-43f3-9dc0-17a6ccb0505a', ' Volvo', 'Black', ' S60', 140, 2002, 'benzine', true);
 
 INSERT INTO `user` (`user_id`, `username`, `name`, `password`, `public_key`) VALUES ('04e8e2f8-5520-376f-8873-d3997af6352b', 'aspinka', 'Casimir', '9194b46814b28eae3dc1e3c130fc72d141462af0', '');
 INSERT INTO `user` (`user_id`, `username`, `name`, `password`, `public_key`) VALUES ('04e99e1e-5a61-3d4e-bbd2-c5b7657f7b27', 'kellen66', 'Oscar', 'bc2e2b7b78e78bec39d497904e15659d04873bf4', '');

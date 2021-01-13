@@ -10,9 +10,11 @@ class Message(db.Model):
 	user_id: str
 	time: str
 	content: str
+	content_self: str
 
 	message_id = db.Column(db.String(64), primary_key=True)
 	chat_id = db.Column(db.String(64))
 	user_id = db.Column(db.String(64))
 	time = db.Column(db.String(64))
 	content = db.Column(db.String(1028))
+	content_self = db.Column(db.String(1028))
