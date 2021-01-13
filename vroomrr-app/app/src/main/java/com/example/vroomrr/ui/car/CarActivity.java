@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.example.vroomrr.Car;
 import com.example.vroomrr.CarImage;
@@ -45,7 +46,13 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car);
 
+//        setupToolbar();
         setupViews();
+    }
+
+    public void setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.car_toolbar);
+        setSupportActionBar(toolbar);
     }
 
     /**

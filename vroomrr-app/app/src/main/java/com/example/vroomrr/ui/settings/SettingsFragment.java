@@ -120,16 +120,19 @@ public class SettingsFragment extends Fragment implements ServerCallback {
         // NumberPickers
         np_build_year_min = root.findViewById(R.id.build_year_min);
         np_build_year_min.setMinValue(1900);
+        np_build_year_min.setValue(1900);
         np_build_year_min.setMaxValue(9999);
         np_build_year_min.setEnabled(true);
 
         np_build_year_max = root.findViewById(R.id.build_year_max);
         np_build_year_max.setMinValue(1900);
+        np_build_year_max.setValue(1900);
         np_build_year_max.setMaxValue(9999);
         np_build_year_max.setEnabled(true);
 
         np_horsepower_min = root.findViewById(R.id.horsepower_min);
-        np_horsepower_min.setMinValue(1);
+        np_horsepower_min.setMinValue(0);
+        np_horsepower_min.setValue(0);
         np_horsepower_min.setMaxValue(9999);
         np_horsepower_min.setEnabled(true);
 
