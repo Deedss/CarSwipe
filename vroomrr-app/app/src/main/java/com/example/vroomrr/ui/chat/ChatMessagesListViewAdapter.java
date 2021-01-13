@@ -51,7 +51,7 @@ public class ChatMessagesListViewAdapter extends RecyclerView.Adapter<ChatMessag
 
         //If message is from current logged in user show on right side
         if(messages.get(position).getUser_id().equals(currentUser.getUserId())){
-            holder.msg_sent.setText(messages.get(position).getContent());
+            holder.msg_sent.setText(messages.get(position).getContentSelf());
             //Show the correct bubble and hide other
             holder.msg_recv_body.setVisibility(View.GONE);
             holder.msg_sent_body.setVisibility(View.VISIBLE);

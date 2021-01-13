@@ -52,12 +52,7 @@ public class RegisterActivity extends AppCompatActivity implements ServerCallbac
                     userObject.setName(nameTxt.getText().toString());
                     userObject.setUsername(usernameTxt.getText().toString());
                     userObject.setPassword(passwordTxt.getText().toString());
-                    try {
-                        Cryptography.generateKeyPair(usernameTxt.getText().toString());
-                        userObject.setPublicKey(Cryptography.publicKeyToString(Cryptography.getPublicKey(usernameTxt.getText().toString())));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+
                     registerUser(userObject);
                 } else {
                     //TODO: Error Handling

@@ -163,8 +163,8 @@ def sendChatMessage():
 		if chat.user_id1 != user_self.user_id and chat.user_id2 != user_self.user_id:
 			return jsonify({"error": "You do not have permission to send messages in this chat"})
 
-		if message.chat_id == '' or message.content == '' or message.content_self == '' or len(message.content) < 1024:
-			return jsonify({"error": "Please enter a valid ChatId, UserId with a message content max size 1024 min size 1"})
+		if message.chat_id == '' or message.content == '' or message.content_self == '':
+			return jsonify({"error": "Please enter a valid ChatId, UserId with a message content"})
 		else:
 			message.message_id = str(uuid.uuid4())
 			message.user_id = user_self.user_id

@@ -19,6 +19,7 @@ import com.example.vroomrr.ServerConnection;
 import com.example.vroomrr.Session;
 import com.example.vroomrr.User;
 import com.example.vroomrr.ui.register.RegisterActivity;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
 public class LoginActivity extends AppCompatActivity implements ServerCallback {
@@ -60,11 +61,17 @@ public class LoginActivity extends AppCompatActivity implements ServerCallback {
                 if(!usernameTxt.getText().toString().equals("") && !passwordTxt.getText().toString().equals("")) {
                     userObject.setUsername(usernameTxt.getText().toString());
                     userObject.setPassword(passwordTxt.getText().toString());
+                    try {
+                        Cryptography.generateKeyPair(usernameTxt.getText().toString());
+                        userObject.setPublicKey(Cryptography.publicKeyToString(Cryptography.getPublicKey(usernameTxt.getText().toString())));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                     loginUser(userObject);
                 } else {
-                    //TODO: Error Handling
-                    System.out.println("Text = Null");
+                    Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content).getRootView(), "Wrong username or password", Snackbar.LENGTH_LONG);
+                    snackbar.show();
                 }
             }
         });

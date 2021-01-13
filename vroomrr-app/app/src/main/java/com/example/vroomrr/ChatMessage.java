@@ -13,6 +13,7 @@ public class ChatMessage {
     private String user_id;
     private String time;
     private String content;
+    private String content_self;
 
     public String getMessage_id() {
         return message_id;
@@ -52,5 +53,13 @@ public class ChatMessage {
 
     public void setContent(String s) {
         this.content = s;
+    }
+
+    public String getContentSelf() {
+        return content_self;
+    }
+
+    public void setContentSelf(String s) {
+        this.content_self = s;
     }
 }

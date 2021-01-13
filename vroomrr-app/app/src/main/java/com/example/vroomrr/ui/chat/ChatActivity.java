@@ -2,6 +2,7 @@ package com.example.vroomrr.ui.chat;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -31,8 +32,9 @@ public class ChatActivity extends AppCompatActivity implements ChatMessagesListV
     private ArrayList<ChatMessage> messages = new ArrayList<>();
     private ChatMessagesListViewAdapter adapter;
     private PublicKey encodingKey;
+    private PublicKey encodingKeySelf;
     private Chat chat;
-
+    private User currentUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,13 +46,14 @@ public class ChatActivity extends AppCompatActivity implements ChatMessagesListV
 
         recyclerView = findViewById(R.id.chatmessages_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        //TODO: Get actual logged in user here!
-        User u = new User();
-        u.setUserId(Cryptography.getFromSharedPreferences(this, String.valueOf(R.string.UserId)));
-        adapter = new ChatMessagesListViewAdapter(getApplicationContext(),this ,messages, u);
+
+        currentUser = new User();
+        currentUser.setUserId(Cryptography.getFromSharedPreferences(this, String.valueOf(R.string.UserId)));
+        adapter = new ChatMessagesListViewAdapter(getApplicationContext(),this ,messages, currentUser);
         recyclerView.setAdapter(adapter);
 
         getEncodingKey();
+        encodingKeySelf = Cryptography.getPublicKey(Cryptography.getFromSharedPreferences(this, String.valueOf(R.string.Username)));
 
         updateList();
 
@@ -94,13 +97,17 @@ public class ChatActivity extends AppCompatActivity implements ChatMessagesListV
     private void decodeMessages(ArrayList<ChatMessage> messages){
         for(ChatMessage chatMessage : messages){
             try {
-                chatMessage.setContent(Cryptography.decrypt(chatMessage.getContent(),
-                        Cryptography.getFromSharedPreferences(this, String.valueOf(R.string.Username))));
-                //      TODO decode own
-                //     chatMessage.setContent_OWN(Cryptography.decrypt(chatMessage.getContent(), Cryptography.getFromSharedPreferences(this, String.valueOf(R.string.Username))));
+                // Decrypt messages using keys
+                if(currentUser.getUserId().equals(chatMessage.getUser_id())){
+                    chatMessage.setContentSelf(Cryptography.decrypt(chatMessage.getContentSelf(), Cryptography.getFromSharedPreferences(this, String.valueOf(R.string.Username))));
+                }else{
+                    chatMessage.setContent(Cryptography.decrypt(chatMessage.getContent(), Cryptography.getFromSharedPreferences(this, String.valueOf(R.string.Username))));
+                }
             } catch (Exception e) {
-                e.printStackTrace();
+                chatMessage.setContentSelf("Message cannot be decrypted");
+                chatMessage.setContent("Message cannot be decrypted");
             }
+
         }
     }
 
@@ -133,9 +140,11 @@ public class ChatActivity extends AppCompatActivity implements ChatMessagesListV
         }
         final ChatMessage message = new ChatMessage();
         message.setChat_id(chat.getChatId());
+        message.setUser_id(currentUser.getUserId());
         try {
             message.setContent(Cryptography.encrypt(text.getText().toString(), encodingKey));
-            // message.setContent_OWN(CryptoGraphy.encrypt(text.getText().toString(), Cryptography.getPublicKey(Cryptography.getFromSharedPreferences(String.valueOf(R.string.Username))));
+            //Add a encrypted copy of the message for later self viewing
+            message.setContentSelf(Cryptography.encrypt(text.getText().toString(), encodingKeySelf));
         } catch (Exception e) {
             e.printStackTrace();
         }
