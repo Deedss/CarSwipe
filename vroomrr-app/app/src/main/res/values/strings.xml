@@ -23,7 +23,7 @@
     <!-- Button Strings -->
     <string name="button_register">Registreren</string>
     <string name="button_login">Inloggen</string>
-
+    <string name="button_save">Save</string>
     <!-- Image Descriptions -->
 
     <!-- Title Strings -->
@@ -32,6 +32,14 @@
     <string name="SessionId">Session-Id</string>
     <string name="UserId">UserId</string>
     <string name="Username">Username</string>
+
+    <!-- Settings Strings -->
+    <string name="settings_build_year_min">bouwjaar min</string>
+    <string name="settings_build_year_max">bouwjaar max</string>
+    <string name="settings_horsepower_min">paardenkracht min</string>
+    <string name="settings_fuel_types">brandstof</string>
+    <string name="settings_brands">merken</string>
+    <string name="settings_colors">kleuren</string>
 
     <!-- ImageView ContentDescription String -->
     <string name="car_image">Image of the car</string>

@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Base64;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -186,14 +185,24 @@ final public class ServerConnection {
     }
 
     /**
-     * Returns a list of possible searchfilters.
-     *
-     * @return ArrayList<SearchFilter>
+     * Get current filter of the User by Session ID
+     * @param callback callback
+     * @param activity activity
      */
-    public ArrayList<SearchFilter> getFilterOptions() {
-        ArrayList<SearchFilter> filters = null;
+    public static void getFilter(ServerCallback callback, Activity activity){
+        GetAsync task = new GetAsync(callback, activity);
+        task.execute("candidates/filter");
+    }
 
-        return filters;
+    /**
+     * Send a filter to the server.
+     * @param filter filter to send
+     * @param callback callback
+     * @param activity activity
+     */
+    public static void updateFilter(SearchFilter filter, ServerCallback callback, Activity activity){
+        PostAsync task = new PostAsync(new Gson().toJson(filter), callback, activity);
+        task.execute("candidates/filter/update");
     }
 
     /**

@@ -156,7 +156,6 @@ public class CarListFragment extends Fragment implements CarListViewAdapter.OnAc
      * @param cars ArrayList of all cars from a user.
      */
     private void getAllCarImages(ArrayList<Car> cars){
-
         for(final Car car : this.cars){
             carImageHashMap.clear();
             ServerConnection.getCarImages(car, new ServerCallback() {
