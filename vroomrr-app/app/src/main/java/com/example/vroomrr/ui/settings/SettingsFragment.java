@@ -88,9 +88,9 @@ public class SettingsFragment extends Fragment implements ServerCallback {
         np_build_year_min.setValue(filter.getBuild_year_min());
         np_build_year_max.setValue(filter.getBuild_year_max());
         np_horsepower_min.setValue(filter.getHorsepower_min());
-        sp_brands.setSelection(filter.getBrands().split(", "));
-        sp_fuel_types.setSelection(filter.getFuel_types().split(", "));
-        sp_colors.setSelection(filter.getFuel_types().split(", "));
+        sp_brands.setSelection(filter.getBrands().split(","));
+        sp_fuel_types.setSelection(filter.getFuel_types().split(","));
+        sp_colors.setSelection(filter.getFuel_types().split(","));
     }
 
     /**
@@ -101,9 +101,9 @@ public class SettingsFragment extends Fragment implements ServerCallback {
         filter.setBuild_year_min(np_build_year_min.getValue());
         filter.setBuild_year_max(np_build_year_max.getValue());
         filter.setHorsepower_min(np_horsepower_min.getValue());
-        filter.setFuel_types(sp_fuel_types.getSelectedItemsAsString());
-        filter.setBrands(sp_brands.getSelectedItemsAsString());
-        filter.setColors(sp_colors.getSelectedItemsAsString());
+        filter.setFuel_types(sp_fuel_types.getSelectedItemsAsString().replace(" ", ""));
+        filter.setBrands(sp_brands.getSelectedItemsAsString().replace(" ", ""));
+        filter.setColors(sp_colors.getSelectedItemsAsString().replace(" ", ""));
 
         ServerConnection.updateFilter(filter, new ServerCallback() {
             @Override
