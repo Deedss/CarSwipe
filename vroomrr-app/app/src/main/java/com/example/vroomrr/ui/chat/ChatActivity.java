@@ -19,6 +19,7 @@ import com.example.vroomrr.User;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.security.PublicKey;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -29,6 +30,7 @@ public class ChatActivity extends AppCompatActivity implements ChatMessagesListV
     private RecyclerView recyclerView;
     private ArrayList<ChatMessage> messages = new ArrayList<>();
     private ChatMessagesListViewAdapter adapter;
+    private PublicKey encodingKey;
     private Chat chat;
 
     @Override
@@ -48,7 +50,10 @@ public class ChatActivity extends AppCompatActivity implements ChatMessagesListV
         adapter = new ChatMessagesListViewAdapter(getApplicationContext(),this ,messages, u);
         recyclerView.setAdapter(adapter);
 
+        getEncodingKey();
+
         updateList();
+
         //Update list with messages every 1 second
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -71,6 +76,7 @@ public class ChatActivity extends AppCompatActivity implements ChatMessagesListV
                         return o1.getTime().compareTo(o2.getTime());
                     }
                 });
+                decodeMessages(messages);
                 adapter.updateData(messages);
             }
         }, this, chat);
@@ -81,14 +87,55 @@ public class ChatActivity extends AppCompatActivity implements ChatMessagesListV
 
     }
 
+    /**
+     * Loop over the messages and decrypt each message with the private Key.
+     * @param messages the ArrayList of messages.
+     */
+    private void decodeMessages(ArrayList<ChatMessage> messages){
+        for(ChatMessage chatMessage : messages){
+            try {
+                chatMessage.setContent(Cryptography.decrypt(chatMessage.getContent(),
+                        Cryptography.getFromSharedPreferences(this, String.valueOf(R.string.Username))));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Check current User against users in Chat and retrieve the Public Key for the user that is not
+     * the logged in user.
+     */
+    private void getEncodingKey(){
+        String userID = Cryptography.getFromSharedPreferences(this, String.valueOf(R.string.UserId));
+        User user = new User();
+        if(userID.equals(chat.getUserId1())){
+            user.setUserId(chat.getUserId2());
+        } else {
+            user.setUserId(chat.getUserId1());
+        }
+        ServerConnection.getPublicKey(user, new ServerCallback() {
+            @Override
+            public void completionHandler(String object, String url) {
+                User tmpUser = new Gson().fromJson(object, User.class);
+                encodingKey = Cryptography.stringToPublicKey(tmpUser.getPublicKey());
+            }
+        }, this);
+    }
+
+
     public void sendClick(final View view) {
         final EditText text = findViewById(R.id.editText);
         if(text.getText().length() == 0){
             return;
         }
-        ChatMessage message = new ChatMessage();
+        final ChatMessage message = new ChatMessage();
         message.setChat_id(chat.getChatId());
-        message.setContent(text.getText().toString());
+        try {
+            message.setContent(Cryptography.encrypt(text.getText().toString(), encodingKey));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         message.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date()));
         view.setEnabled(false);
         ServerConnection.sendMessageTMP(new ServerCallback() {

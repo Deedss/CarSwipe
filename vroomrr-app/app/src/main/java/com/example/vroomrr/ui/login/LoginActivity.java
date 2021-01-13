@@ -27,6 +27,7 @@ public class LoginActivity extends AppCompatActivity implements ServerCallback {
     private EditText passwordTxt;
     private TextView registerTxt;
     private Gson gson;
+    private User tmpUser;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,6 +79,7 @@ public class LoginActivity extends AppCompatActivity implements ServerCallback {
     }
 
     public void loginUser(User body) {
+        tmpUser = body;
         ServerConnection.login(body, this, this);
     }
 
@@ -87,6 +89,7 @@ public class LoginActivity extends AppCompatActivity implements ServerCallback {
 
         Cryptography.addToSharedPreferences(this, String.valueOf(R.string.SessionId), session.getSession_id());
         Cryptography.addToSharedPreferences(this, String.valueOf(R.string.UserId), session.getUser_id());
+        Cryptography.addToSharedPreferences(this, String.valueOf(R.string.Username), tmpUser.getUsername());
 
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);

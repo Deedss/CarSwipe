@@ -1,5 +1,6 @@
 package com.example.vroomrr.ui.register;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,6 +15,7 @@ import com.example.vroomrr.R;
 import com.example.vroomrr.ServerCallback;
 import com.example.vroomrr.ServerConnection;
 import com.example.vroomrr.User;
+import com.example.vroomrr.ui.login.LoginActivity;
 import com.google.gson.Gson;
 
 public class RegisterActivity extends AppCompatActivity implements ServerCallback {
@@ -46,15 +48,13 @@ public class RegisterActivity extends AppCompatActivity implements ServerCallbac
             public void onClick(View v) {
                 User userObject = new User();
 
-
-
                 if(!nameTxt.getText().toString().equals("") && !usernameTxt.getText().toString().equals("") && !passwordTxt.getText().toString().equals("")) {
                     userObject.setName(nameTxt.getText().toString());
                     userObject.setUsername(usernameTxt.getText().toString());
                     userObject.setPassword(passwordTxt.getText().toString());
                     try {
-                        Cryptography.generateKeyPair();
-                        userObject.setPublicKey(Cryptography.getPublicKey().toString());
+                        Cryptography.generateKeyPair(usernameTxt.getText().toString());
+                        userObject.setPublicKey(Cryptography.publicKeyToString(Cryptography.getPublicKey(usernameTxt.getText().toString())));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -73,7 +73,11 @@ public class RegisterActivity extends AppCompatActivity implements ServerCallbac
 
     @Override
     public void completionHandler(String object, String url) {
-        //TODO: Object Handling.
-        Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();
+        if(object.contains("name\":")){
+            Toast.makeText(getApplicationContext(), "Successful Registration", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            this.finish();
+        }
     }
 }

@@ -31,6 +31,7 @@
     <!-- General Strings -->
     <string name="SessionId">Session-Id</string>
     <string name="UserId">UserId</string>
+    <string name="Username">Username</string>
 
     <!-- ImageView ContentDescription String -->
     <string name="car_image">Image of the car</string>

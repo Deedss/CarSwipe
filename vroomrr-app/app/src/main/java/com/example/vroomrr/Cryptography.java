@@ -13,17 +13,18 @@ import androidx.security.crypto.MasterKey;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.Cipher;
 
 final public class Cryptography {
     // Variables to use
     final static private int keySize = 2048;
-    final static private String alias = "VroomrrKey";
 
     public Cryptography() {
     }
@@ -32,7 +33,7 @@ final public class Cryptography {
      * Generate a new KeyPair when registering a User.
      * @throws Exception
      */
-    public static void generateKeyPair() throws Exception {
+    public static void generateKeyPair(String alias) throws Exception {
         KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
         keyStore.load(null);
 
@@ -61,11 +62,9 @@ final public class Cryptography {
      * @return returns the encrypted String.
      * @throws Exception Throws Exceptions for Cipher.
      */
-    public static String encrypt(String data) throws Exception{
+    public static String encrypt(String data, PublicKey publicKey) throws Exception{
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        //TODO get Public Key from server
-//        cipher.init(Cipher.ENCRYPT_MODE, ServerConnection.getPublicKey());
-        cipher.init(Cipher.ENCRYPT_MODE, getPublicKey());
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
         byte[] bytes = cipher.doFinal(data.getBytes());
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
@@ -76,9 +75,9 @@ final public class Cryptography {
      * @return Returns decrypted String
      * @throws Exception Throws Exceptions for Cipher.
      */
-    public static String decrypt(String data) throws Exception{
+    public static String decrypt(String data, String alias) throws Exception{
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        cipher.init(Cipher.DECRYPT_MODE, getPrivateKey());
+        cipher.init(Cipher.DECRYPT_MODE, getPrivateKey(alias));
         byte[] encryptedData = Base64.decode(data, Base64.DEFAULT);
         byte[] decodedData = cipher.doFinal(encryptedData);
         return new String(decodedData, StandardCharsets.UTF_8); // for UTF-8 encoding;
@@ -88,7 +87,7 @@ final public class Cryptography {
      * Get the public Key from Keystore
      * @return PublicKey
      */
-    public static PublicKey getPublicKey() {
+    public static PublicKey getPublicKey(String alias) {
         KeyStore keyStore;
         try {
             // Open KeyStore and get Entry
@@ -108,7 +107,7 @@ final public class Cryptography {
      * Get Private Key from AndroidKeyStore.
      * @return Returns Key from AndroidKeyStore.
      */
-    private static PrivateKey getPrivateKey() {
+    private static PrivateKey getPrivateKey(String alias) {
         KeyStore keyStore;
         try {
             // Open KeyStore and get Entry
@@ -193,5 +192,41 @@ final public class Cryptography {
             editor.putString(key, value);
             editor.apply();
         }
+    }
+
+    /**
+     * Return PublicKey of a String value
+     * @param publStr String to decode
+     * @return PublicKey
+     */
+    public static PublicKey stringToPublicKey(String publStr)  {
+        PublicKey publicKey = null;
+        try {
+            byte[] data = Base64.decode(publStr, Base64.DEFAULT);
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(data);
+            KeyFactory fact = KeyFactory.getInstance("RSA");
+            publicKey = fact.generatePublic(spec);
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+        return publicKey;
+    }
+
+    /**
+     * Return a String from a PublicKey
+     * @param publ Public Key to encode
+     * @return String
+     */
+    public static String publicKeyToString(PublicKey publ) {
+        String publicKeyString = null;
+        try {
+            KeyFactory fact = KeyFactory.getInstance("RSA");
+            X509EncodedKeySpec spec = fact.getKeySpec(publ,
+                    X509EncodedKeySpec.class);
+            publicKeyString = Base64.encodeToString(spec.getEncoded(), Base64.DEFAULT);
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+        return publicKeyString;
     }
 }

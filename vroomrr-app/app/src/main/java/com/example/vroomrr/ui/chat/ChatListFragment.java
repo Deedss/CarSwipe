@@ -67,7 +67,7 @@ public class ChatListFragment extends Fragment implements ChatListViewAdapter.On
             if(c.getUserId1().equals(currentUserID)){
                 u.setUserId(c.getUserId2());
             }else{
-                    u.setUserId(c.getUserId1());
+                u.setUserId(c.getUserId1());
             }
 
             // Get default selected car for every chat user
