@@ -86,7 +86,7 @@ public class LoginActivity extends AppCompatActivity implements ServerCallback {
         Session session = gson.fromJson(object, Session.class);
 
         Cryptography.addToSharedPreferences(this, String.valueOf(R.string.SessionId), session.getSession_id());
-        Cryptography.addToSharedPreferences(this, "UserId", session.getUser_id());
+        Cryptography.addToSharedPreferences(this, String.valueOf(R.string.UserId), session.getUser_id());
 
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);

@@ -35,7 +35,7 @@ public class ChatListFragment extends Fragment implements ChatListViewAdapter.On
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //TODO: Add actual logged in user here from main
 
-        currentUserID = Cryptography.getFromSharedPreferences(this.getContext(), "UserId");
+        currentUserID = Cryptography.getFromSharedPreferences(this.getContext(), String.valueOf(R.string.UserId));
 
         //TODO: Remove this garbage
 

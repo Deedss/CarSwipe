@@ -44,7 +44,7 @@ public class ChatActivity extends AppCompatActivity implements ChatMessagesListV
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         //TODO: Get actual logged in user here!
         User u = new User();
-        u.setUserId(Cryptography.getFromSharedPreferences(this, "UserId"));
+        u.setUserId(Cryptography.getFromSharedPreferences(this, String.valueOf(R.string.UserId)));
         adapter = new ChatMessagesListViewAdapter(getApplicationContext(),this ,messages, u);
         recyclerView.setAdapter(adapter);
 
