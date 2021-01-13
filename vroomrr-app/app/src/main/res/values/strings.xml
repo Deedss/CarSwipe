@@ -10,7 +10,7 @@
     <!-- Menu Strings -->
     <string name="menu_home">Find cars</string>
     <string name="menu_chat">Chats</string>
-    <string name="menu_car">My cars</string>@
+    <string name="menu_car">My cars</string>
     <string name="menu_info">Car Info</string>
     <string name="menu_settings">Settings</string>
 
