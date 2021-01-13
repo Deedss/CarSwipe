@@ -15,6 +15,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.vroomrr.Car;
+import com.example.vroomrr.CarImage;
+import com.example.vroomrr.Image64;
 import com.example.vroomrr.R;
 import com.example.vroomrr.ServerCallback;
 import com.example.vroomrr.ServerConnection;
@@ -33,7 +35,10 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
 
     // other variables
     private Car car;
+    private CarImage carImage;
+    private Bitmap bitmap;
     Gson gson = new Gson();
+    private Bitmap tmpbitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +63,13 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
         car_imageView.setOnClickListener(this);
 
         // Get data from intent extra and convert to car object.
-        String extra = getIntent().getStringExtra("car_info");
-        car = gson.fromJson(extra, Car.class);
+        String car_info = getIntent().getStringExtra("car_info");
+        car = gson.fromJson(car_info, Car.class);
+        String carImageJson = getIntent().getStringExtra("carImage");
+        carImage = gson.fromJson(carImageJson, CarImage.class);
+
+        // set bitmap
+        bitmap = CarListFragment.getBitmap_transfer();
 
         insertCarData();
     }
@@ -68,6 +78,7 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
      * This function is used to easily update all items in the Car object.
      */
     private void insertCarData() {
+        car_imageView.setImageBitmap(bitmap);
         car_licenseplate.setText(car.getLicense_plate());
         car_brand.setText(car.getBrand());
         car_model.setText(car.getType());
@@ -91,6 +102,21 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
                 Toast.makeText(getApplicationContext(), "Updated", Toast.LENGTH_SHORT).show();
             }
         }, this);
+        ServerConnection.addCarImage(convertToImage64(), new ServerCallback() {
+            @Override
+            public void completionHandler(String object, String url) {
+                Toast.makeText(getApplicationContext(), "Added Image", Toast.LENGTH_SHORT).show();
+            }
+        }, this);
+        this.finish();
+    }
+
+    private Image64 convertToImage64(){
+        String base64 = ServerConnection.encodeToBase64(bitmap, this);
+        Image64 image64 = new Image64();
+        image64.setImage64(base64);
+        image64.setLicense_plate(car.getLicense_plate());
+        return image64;
     }
 
     /**
@@ -101,6 +127,15 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
         if (cameraIntent.resolveActivity(this.getPackageManager()) != null) {
             startActivityForResult(cameraIntent, 1000);
         }
+    }
+
+    private void deleteCarImage(){
+        ServerConnection.deleteCarImage(carImage, new ServerCallback() {
+            @Override
+            public void completionHandler(String object, String url) {
+                Toast.makeText(getApplicationContext(), "Removed image", Toast.LENGTH_LONG).show();
+            }
+        }, this);
     }
 
     /**
@@ -122,8 +157,9 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
                     e.printStackTrace();
                 }
                 car_imageView.setImageBitmap(bitmapImage);
-                //TODO upload image.
-//                addImageToServer();
+                if(tmpbitmap != bitmapImage){
+                    tmpbitmap = bitmapImage;
+                }
             }
         }
     }

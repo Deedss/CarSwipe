@@ -2,8 +2,10 @@ package com.example.vroomrr;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -31,15 +33,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setupToolbar();
-        setupNavigationDrawer();
-
-        if(!Cryptography.getEncryptedSharedPreferences(this).contains(String.valueOf(R.string.SessionId))) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            this.finish();
+        if(!Cryptography.getEncryptedSharedPreferences(this).contains(String.valueOf(R.string.SessionId))){
+            logout();
         }
 
+        setupToolbar();
+        setupNavigationDrawer();
         checkAndRequestPermissions();
     }
 
@@ -58,6 +57,13 @@ public class MainActivity extends AppCompatActivity {
     public void setupNavigationDrawer() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.getMenu().findItem(R.id.nav_logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                logout();
+                return true;
+            }
+        });
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -67,6 +73,15 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+    }
+
+    private void logout() {
+        SharedPreferences SP = Cryptography.getEncryptedSharedPreferences(this);
+        SharedPreferences.Editor editor = SP.edit();
+        editor.clear().apply();
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     /**

@@ -2,19 +2,18 @@ package com.example.vroomrr;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Base64;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,9 +22,7 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.PublicKey;
 import java.util.ArrayList;
-import java.util.List;
 
 final public class ServerConnection {
     // Cookies handler
@@ -164,23 +161,23 @@ final public class ServerConnection {
 
     /**
      * Add a new image to a specific car.
-     * @param car The car to add new image for
+     * @param image64 The base64 model for the image to add.
      * @param callback The callback to return results to
      * @param activity The activity to return results to
      */
-    public static void addCarImage(Car car, ServerCallback callback, Activity activity){
-        PostAsync task = new PostAsync(new Gson().toJson(car), callback, activity);
+    public static void addCarImage(Image64 image64, ServerCallback callback, Activity activity){
+        PostAsync task = new PostAsync(new Gson().toJson(image64), callback, activity);
         task.execute("cars/image/add");
     }
 
     /**
      * Delete an image for a car.
-     * @param car The car to delete image for
+     * @param carImage The image to delete for a car.
      * @param callback The callback to return results to
      * @param activity The activity to return results to
      */
-    public static void deleteCarImage(Car car, ServerCallback callback, Activity activity){
-        PostAsync task = new PostAsync(new Gson().toJson(car), callback, activity);
+    public static void deleteCarImage(CarImage carImage, ServerCallback callback, Activity activity){
+        PostAsync task = new PostAsync(new Gson().toJson(carImage), callback, activity);
         task.execute("cars/image/delete");
     }
 
@@ -207,14 +204,39 @@ final public class ServerConnection {
 
     /**
      * Get the public key from the database for specific user.
-     *
      * @param user User to get public key from
-     * @return publickey
+     * @param callback ServerCallback
+     * @param activity Activity
      */
-    public static PublicKey getPublicKey(User user) {
-        PublicKey publicKey = null;
+    public static void getPublicKey(User user, ServerCallback callback, Activity activity) {
+        PostAsync task = new PostAsync(new Gson().toJson(user), callback, activity);
+        task.execute("user");
+    }
 
-        return publicKey;
+    /**
+     * Encode an image to a Base64 to send it to the server.
+     * @param bitmap , bitmap image to send
+     * @param context , Context of where to get the resources.
+     * @return , return a Base64 string.
+     */
+    public static String encodeToBase64(Bitmap bitmap, Context context){
+        //encode image to base64 string
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        return Base64.encodeToString(imageBytes, Base64.DEFAULT);
+    }
+
+    /**
+     * Return a bitmap of the base64 encoded image
+     * @param string , Base64 encoded string
+     * @param context , Context of the image.
+     * @return , return Bitmap value.
+     */
+    public static Bitmap decodeToBitmap(String string, Context context){
+        //decode base64 string to image
+        byte[] imageBytes = Base64.decode(string, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
     }
 
     public static class GetImageFromUrl extends AsyncTask<String, Void, Bitmap>{
@@ -256,11 +278,8 @@ final public class ServerConnection {
             StringBuffer data = new StringBuffer("");
 
             try {
-                //Cryptography.addToSharedPreferences(activity, String.valueOf(R.string.SessionId), "05480a28-74ae-40e5-a912-731564c232bf");
-                //Cryptography.updateSharedPreferences(activity, String.valueOf(R.string.SessionId), "df6ad070-3529-4567-a460-c234e0ead214");
                 SharedPreferences SP = Cryptography.getEncryptedSharedPreferences(activity);
 
-                //System.out.println(Cryptography.getFromSharedPreferences(activity, String.valueOf(R.string.SessionId)));
                 // Setup URL connection.
                 String newUrl = master_server + strings[0];
                 URL url = new URL(newUrl);
@@ -283,7 +302,11 @@ final public class ServerConnection {
                 // Do the callback
                 activity.runOnUiThread(new Runnable() {
                     public void run(){
-                        callback.completionHandler(returnData, strings[0]);
+                        if(returnData.startsWith("{\"error\":")){
+                            Toast.makeText(activity, returnData, Toast.LENGTH_LONG).show();
+                        } else {
+                            callback.completionHandler(returnData, strings[0]);
+                        }
                     }
                 });
 
@@ -318,8 +341,6 @@ final public class ServerConnection {
             StringBuffer data = new StringBuffer("");
 
             try {
-                //Cryptography.addToSharedPreferences(activity, String.valueOf(R.string.SessionId), "05480a28-74ae-40e5-a912-731564c232bf");
-                //Cryptography.updateSharedPreferences(activity, String.valueOf(R.string.SessionId), "df6ad070-3529-4567-a460-c234e0ead214");
                 SharedPreferences SP = Cryptography.getEncryptedSharedPreferences(activity);
 
                 // Setup URL connection.
@@ -353,7 +374,11 @@ final public class ServerConnection {
                 // Do the callback
                 activity.runOnUiThread(new Runnable() {
                     public void run(){
-                        callback.completionHandler(returnData, strings[0]);
+                        if(returnData.startsWith("{\"error\":")){
+                            Toast.makeText(activity, returnData, Toast.LENGTH_LONG).show();
+                        } else {
+                            callback.completionHandler(returnData, strings[0]);
+                        }
                     }
                 });
 

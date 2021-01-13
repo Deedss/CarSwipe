@@ -1,20 +1,17 @@
 package com.example.vroomrr.ui.chat;
 
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.EditText;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
-import android.content.Context;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
-
 import com.example.vroomrr.Chat;
 import com.example.vroomrr.ChatMessage;
+import com.example.vroomrr.Cryptography;
 import com.example.vroomrr.R;
 import com.example.vroomrr.ServerCallback;
 import com.example.vroomrr.ServerConnection;
@@ -24,7 +21,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
@@ -48,7 +44,7 @@ public class ChatActivity extends AppCompatActivity implements ChatMessagesListV
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         //TODO: Get actual logged in user here!
         User u = new User();
-        u.setUserId("47b6b871-26ce-43f3-9dc0-17a6ccb0505a");
+        u.setUserId(Cryptography.getFromSharedPreferences(this, "UserId"));
         adapter = new ChatMessagesListViewAdapter(getApplicationContext(),this ,messages, u);
         recyclerView.setAdapter(adapter);
 

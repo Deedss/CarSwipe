@@ -40,7 +40,13 @@ public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull final CarListViewHolder holder, final int position) {
-//        holder.car_image.setImageBitmap(images.get(position));
+        if(images.size() != 0){
+            if(images.size() == 1){
+                holder.car_image.setImageBitmap(images.get(0));
+            } else {
+                holder.car_image.setImageBitmap(images.get(position));
+            }
+        }
         holder.car_name.setText(cars.get(position).getType());
         holder.car_license.setText(cars.get(position).getLicense_plate());
     }
@@ -65,6 +71,11 @@ public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.
      */
     public ArrayList<Car> getCars() {
         return cars;
+    }
+
+    public void updateImages(ArrayList<Bitmap> images) {
+        this.images = images;
+        notifyDataSetChanged();
     }
 
     interface OnActionListener{

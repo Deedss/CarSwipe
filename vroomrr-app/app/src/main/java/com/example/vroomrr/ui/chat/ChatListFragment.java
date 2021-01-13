@@ -1,15 +1,12 @@
 package com.example.vroomrr.ui.chat;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,7 +18,6 @@ import com.example.vroomrr.R;
 import com.example.vroomrr.ServerCallback;
 import com.example.vroomrr.ServerConnection;
 import com.example.vroomrr.User;
-import com.example.vroomrr.ui.car.CarActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -39,11 +35,7 @@ public class ChatListFragment extends Fragment implements ChatListViewAdapter.On
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //TODO: Add actual logged in user here from main
 
-        SharedPreferences SP = Cryptography.getEncryptedSharedPreferences(this.getActivity());
-        SharedPreferences.Editor editor = SP.edit();
-        editor.putString(String.valueOf(R.string.SessionId),"c396a4f5-3fa5-4e67-b6fa-75aa8cf23c27");
-        editor.apply();
-        currentUserID = "47b6b871-26ce-43f3-9dc0-17a6ccb0505a";
+        currentUserID = Cryptography.getFromSharedPreferences(this.getContext(), "UserId");
 
         //TODO: Remove this garbage
 
