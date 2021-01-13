@@ -100,9 +100,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void completionHandler(String object, String url) {
                 ArrayList<Car> cars = new Gson().fromJson(object, new TypeToken<ArrayList<Car>>(){}.getType());
+                TextView underText = headerView.findViewById(R.id.text2);
+                if(cars.size() == 0){
+                    underText.setText("No car found");
+
+                }
                 for(Car car : cars){
                     if(car.isSelected()){
-                        TextView underText = headerView.findViewById(R.id.text2);
                         underText.setText(car.getBrand() + " " + car.getType() + " - " + car.getLicense_plate());
                         loadCarImage(car, headerView);
                         return;

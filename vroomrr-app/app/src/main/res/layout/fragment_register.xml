@@ -30,48 +30,28 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_margin="15dp"
-        android:inputType="textPassword"
+        android:inputType="text"
         android:autofillHints="@string/placeholder_username"
         android:hint="@string/placeholder_username"
         app:layout_constraintTop_toBottomOf="@id/name_register"/>
 
-    <EditText
-        android:id="@+id/password_register"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_margin="15dp"
-        android:inputType="textPassword"
-        android:autofillHints="@string/placeholder_password"
-        android:hint="@string/placeholder_password"
-        app:layout_constraintTop_toBottomOf="@id/username_register"/>
+        <EditText
+            android:id="@+id/password_register"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="15dp"
+            android:autofillHints="@string/placeholder_password"
+            android:hint="@string/placeholder_password"
+            android:inputType="textPassword"
+            app:layout_constraintTop_toBottomOf="@id/username_register" />
 
-    <EditText
-        android:id="@+id/license_register"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_margin="15dp"
-        android:inputType="textPassword"
-        android:autofillHints="@string/placeholder_license"
-        android:hint="@string/placeholder_license"
-        app:layout_constraintTop_toBottomOf="@id/password_register"/>
-
-    <Button
+        <Button
         android:id="@+id/button_register"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
         android:background="@color/colorAccent"
-        android:text="@string/button_register"
-        app:layout_constraintTop_toBottomOf="@id/license_register" />
+        android:text="@string/button_register" />
 
-    <TextView
-        android:id="@+id/register_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Already have a account?"
-        android:layout_margin="15dp"
-        android:textAlignment="center"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/button_register" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

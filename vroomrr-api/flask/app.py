@@ -201,15 +201,16 @@ def getCandidates():
 			old_rating = Opinion.query.filter(Opinion.user_id_match == cand.user_id, Opinion.user_id == user_self.user_id).first()
 			cand.password = ''
 			car = Car.query.filter(Car.user_id == cand.user_id, Car.selected).first()
-			images = Car_images.query.filter(Car_images.license_plate == car.license_plate).all()
-			if (p.colors.lower().find(car.color.lower().strip()) != -1 or p.colors == '') \
-					and (p.brands.lower().find(car.brand.lower().strip()) != -1 or p.brands == '') \
-					and (p.fuel_types.lower().find(car.fuel_type.lower().strip()) != -1 or p.fuel_types == '') \
-					and (car.horsepower > p.horsepower_min) \
-					and (p.build_year_min <= car.build_year) \
-					and (p.build_year_max >= car.build_year)\
-					and (old_rating is None):
-				data.append({'user': cand, 'car': car, 'car_images': images})
+			if car is not None:
+				images = Car_images.query.filter(Car_images.license_plate == car.license_plate).all()
+				if (p.colors.lower().find(car.color.lower().strip()) != -1 or p.colors == '') \
+						and (p.brands.lower().find(car.brand.lower().strip()) != -1 or p.brands == '') \
+						and (p.fuel_types.lower().find(car.fuel_type.lower().strip()) != -1 or p.fuel_types == '') \
+						and (car.horsepower > p.horsepower_min) \
+						and (p.build_year_min <= car.build_year) \
+						and (p.build_year_max >= car.build_year)\
+						and (old_rating is None):
+					data.append({'user': cand, 'car': car, 'car_images': images})
 		return jsonify(data)
 	else:
 		return jsonify({"error": "Session has expired or does not exist"})

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -57,12 +58,23 @@ public class SwipeFragment extends Fragment implements ServerCallback {
         yellow = root.findViewById(R.id.yellow);
         green = root.findViewById(R.id.green);
 
+        red.setVisibility(View.GONE);
+        green.setVisibility(View.GONE);
+        yellow.setVisibility(View.GONE);
+
         ServerConnection.getCandidates(new ServerCallback() {
             @Override
             public void completionHandler(String object, String url) {
                 candidates = new Gson().fromJson(object, new TypeToken<ArrayList<Candidate>>(){}.getType());
                 Collections.shuffle(candidates);
-                loadCandidate(candidates.get(current_candidate));
+                if(candidates.size() > 0) {
+                    loadCandidate(candidates.get(current_candidate));
+                    red.setVisibility(View.VISIBLE);
+                    green.setVisibility(View.VISIBLE);
+                    yellow.setVisibility(View.VISIBLE);
+                }else{
+                    loadError();
+                }
             }
         }, getActivity());
 
@@ -155,6 +167,8 @@ public class SwipeFragment extends Fragment implements ServerCallback {
             current_candidate++;
             current_image = 0;
             loadCandidate(candidates.get(current_candidate));
+        }else{
+            loadError();
         }
     }
 
@@ -179,6 +193,15 @@ public class SwipeFragment extends Fragment implements ServerCallback {
         }catch (Exception e){
             Log.e("Error", e.toString());
         }
+    }
+
+    private void loadError(){
+        red.setVisibility(View.GONE);
+        green.setVisibility(View.GONE);
+        yellow.setVisibility(View.GONE);
+        title.setText("");
+        description.setText("");
+        subtitle.setText("No users found matching your criteria, check back later");
     }
 
 
