@@ -96,6 +96,8 @@ public class ChatActivity extends AppCompatActivity implements ChatMessagesListV
             try {
                 chatMessage.setContent(Cryptography.decrypt(chatMessage.getContent(),
                         Cryptography.getFromSharedPreferences(this, String.valueOf(R.string.Username))));
+                //      TODO decode own
+                //     chatMessage.setContent_OWN(Cryptography.decrypt(chatMessage.getContent(), Cryptography.getFromSharedPreferences(this, String.valueOf(R.string.Username))));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -133,6 +135,7 @@ public class ChatActivity extends AppCompatActivity implements ChatMessagesListV
         message.setChat_id(chat.getChatId());
         try {
             message.setContent(Cryptography.encrypt(text.getText().toString(), encodingKey));
+            // message.setContent_OWN(CryptoGraphy.encrypt(text.getText().toString(), Cryptography.getPublicKey(Cryptography.getFromSharedPreferences(String.valueOf(R.string.Username))));
         } catch (Exception e) {
             e.printStackTrace();
         }
