@@ -99,6 +99,11 @@ final public class ServerConnection {
         task.execute("candidates");
     }
 
+    public static void rateCandidate(Opinion opinion, ServerCallback callback, Activity activity) {
+        PostAsync task = new PostAsync(new Gson().toJson(opinion), callback, activity);
+        task.execute("candidates/opinion");
+    }
+
     /**
      * Get all cars from a specific user
      * @param callback The callback to return results to

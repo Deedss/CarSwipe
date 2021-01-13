@@ -1,6 +1,9 @@
 package com.example.vroomrr.ui.swipe;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,9 +20,13 @@ import androidx.fragment.app.Fragment;
 
 import com.example.vroomrr.Candidate;
 import com.example.vroomrr.CarImage;
+import com.example.vroomrr.Chat;
+import com.example.vroomrr.Opinion;
 import com.example.vroomrr.R;
 import com.example.vroomrr.ServerCallback;
 import com.example.vroomrr.ServerConnection;
+import com.example.vroomrr.Session;
+import com.example.vroomrr.ui.chat.ChatActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -31,6 +39,9 @@ public class SwipeFragment extends Fragment implements ServerCallback {
     private TextView title;
     private TextView subtitle;
     private TextView description;
+    private ImageButton red;
+    private ImageButton yellow;
+    private ImageButton green;
 
     private ArrayList<Candidate> candidates;
     private int current_candidate = 0;
@@ -42,6 +53,9 @@ public class SwipeFragment extends Fragment implements ServerCallback {
         title = root.findViewById(R.id.title);
         subtitle = root.findViewById(R.id.subtitle);
         description = root.findViewById(R.id.description);
+        red = root.findViewById(R.id.red);
+        yellow = root.findViewById(R.id.yellow);
+        green = root.findViewById(R.id.green);
 
         ServerConnection.getCandidates(new ServerCallback() {
             @Override
@@ -61,31 +75,107 @@ public class SwipeFragment extends Fragment implements ServerCallback {
             }
         });
 
+        red.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Opinion o = new Opinion();
+                o.setUserIdMatch(candidates.get(current_candidate).getUser().getUserId());
+                o.setOpinion("red");
+
+                ServerConnection.rateCandidate(o, new ServerCallback() {
+                    @Override
+                    public void completionHandler(String object, String url) {
+
+                    }
+                }, getActivity());
+                loadNextCandidate();
+            }
+        });
+
+        yellow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Opinion o = new Opinion();
+                o.setUserIdMatch(candidates.get(current_candidate).getUser().getUserId());
+                o.setOpinion("yellow");
+
+                ServerConnection.rateCandidate(o, new ServerCallback() {
+                    @Override
+                    public void completionHandler(String object, String url) {
+
+                    }
+                }, getActivity());
+                loadNextCandidate();
+            }
+        });
+
+        green.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Opinion o = new Opinion();
+                o.setUserIdMatch(candidates.get(current_candidate).getUser().getUserId());
+                o.setOpinion("green");
+
+                ServerConnection.rateCandidate(o, new ServerCallback() {
+                    @Override
+                    public void completionHandler(String object, String url) {
+                        Chat tmpchat = new Gson().fromJson(object, Chat.class);
+                        tmpchat.setName(candidates.get(current_candidate).getCar().getBrand() + " " +candidates.get(current_candidate).getCar().getType()
+                                + " - " + candidates.get(current_candidate).getCar().getLicense_plate());
+                        tmpchat.setDescription("Matched on " + tmpchat.getStart());
+                        if(tmpchat.getChatId() != null){
+                            showMatch(tmpchat);
+                        }
+
+                    }
+                }, getActivity());
+                loadNextCandidate();
+            }
+        });
+
         return root;
     }
 
     private void imageTouched(int x, int y){
         if(x > currentimage.getWidth() / 2){
-            if(current_candidate < candidates.size() - 1){
-                current_candidate++;
+            if(current_image < candidates.get(current_candidate).getCarImages().size() - 1){
+                current_image++;
                 loadCandidate(candidates.get(current_candidate));
             }
         }else{
-            if(current_candidate > 0){
-                current_candidate--;
+            if(current_image > 0){
+                current_image--;
                 loadCandidate(candidates.get(current_candidate));
             }
         }
     }
 
+    private void loadNextCandidate(){
+        if(current_candidate < candidates.size() - 1){
+            current_candidate++;
+            current_image = 0;
+            loadCandidate(candidates.get(current_candidate));
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
     private void loadCandidate(Candidate candidate){
         title.setText(candidate.getUser().getName());
-        subtitle.setText(candidate.getCar().getBuild_year() + " " + candidate.getCar().getBrand() + " " + candidate.getCar().getType());
-        description.setText(candidate.getCar().getDescription());
+        subtitle.setText(candidate.getCar().getBuild_year() + " " + candidate.getCar().getBrand() + " " + candidate.getCar().getType()
+                + " - " + candidate.getCar().getLicense_plate());
+
+        description.setText(
+                 candidate.getCar().getHorsepower() +" HP, "+
+                        candidate.getCar().getFuel_type() +", "+
+                                candidate.getCar().getColor() +"\n\n"+
+                candidate.getCar().getDescription());
+        currentimage.setImageBitmap(null);
 
         try {
-            Bitmap image = new ServerConnection.GetImageFromUrl().execute(candidate.getCarImages().get(current_image).getCar_images_id()).get();
-            currentimage.setImageBitmap(image);
+            if(candidate.getCarImages().size() > 0) {
+                Bitmap image = new ServerConnection.GetImageFromUrl().execute(candidate.getCarImages().get(current_image).getCar_images_id()).get();
+                currentimage.setImageBitmap(image);
+            }
         }catch (Exception e){
             Log.e("Error", e.toString());
         }
@@ -94,5 +184,32 @@ public class SwipeFragment extends Fragment implements ServerCallback {
 
     @Override
     public void completionHandler(String object, String url) {
+    }
+
+    public void showMatch(final Chat c){
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this.getContext());
+        builder1.setMessage("It's a match! do you want to chat with this user?");
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "Open Chat",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(getActivity(), ChatActivity.class);
+                        intent.putExtra("chat", new Gson().toJson(c));
+                        getActivity().startActivity(intent);
+                    }
+                });
+
+        builder1.setNegativeButton(
+                "Back",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
     }
 }

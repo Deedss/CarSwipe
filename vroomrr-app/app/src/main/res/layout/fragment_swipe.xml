@@ -13,14 +13,13 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="16dp"
-        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse lobortis facilisis lacus. Nullam laoreet tellus a facilisis volutpat. Nullam semper urna orci, eget malesuada neque consectetur ac. Nam ac nulla nisi. Vestibulum et justo non neque consequat varius eu eu enim. Duis eu sollicitudin magna. Nunc et tellus hendrerit, tincidunt diam in, egestas mi. Nam sapien lorem, condimentum in tempus posuere, varius et nisi. Aliquam ac sapien justo. Phasellus quis ante et lectus vestibulum ornare. Praesent eget metus posuere, tincidunt metus in, convallis ante. Curabitur porttitor turpis ipsum, vitae ultrices nulla tincidunt in.  Etiam consequat odio eu erat pulvinar, placerat elementum nibh convallis. Vivamus fermentum, tellus eu cursus convallis, augue massa aliquam leo, ut"
         app:layout_constraintEnd_toEndOf="@+id/car_preview"
         app:layout_constraintHorizontal_bias="0.111"
         app:layout_constraintStart_toStartOf="@+id/subtitle"
         app:layout_constraintTop_toBottomOf="@+id/subtitle" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/yellow"
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:layout_gravity="center"
@@ -35,7 +34,7 @@
         app:layout_constraintTop_toBottomOf="@+id/description" />
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/green"
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:layout_gravity="center"
@@ -45,11 +44,11 @@
         android:background="@drawable/green_light"
         android:padding="20dp"
         android:scaleType="fitCenter"
-        app:layout_constraintStart_toEndOf="@+id/imageButton"
+        app:layout_constraintStart_toEndOf="@+id/yellow"
         app:layout_constraintTop_toBottomOf="@+id/description" />
 
     <ImageButton
-        android:id="@+id/imageButton3"
+        android:id="@+id/red"
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:layout_gravity="center"
@@ -59,7 +58,7 @@
         android:background="@drawable/red_light"
         android:padding="20dp"
         android:scaleType="fitCenter"
-        app:layout_constraintEnd_toStartOf="@+id/imageButton"
+        app:layout_constraintEnd_toStartOf="@+id/yellow"
         app:layout_constraintTop_toBottomOf="@+id/description" />
 
     <TextView
@@ -67,7 +66,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="2001 Chevvy Highlander"
+        android:text=""
         app:layout_constraintStart_toStartOf="@+id/title"
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
@@ -102,7 +101,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
         android:layout_marginTop="4dp"
-        android:text="Henkie, 69"
+        android:text=""
         android:textColor="#000000"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="@+id/car_preview"
