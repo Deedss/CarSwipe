@@ -92,13 +92,11 @@ final public class ServerConnection {
     /**
      * Returns all possible candidates depending on the user search filter.
      *
-     * @param filter The filter to define the results by.
-     * @return ArrayList<User>
+     *
      */
-    public ArrayList<User> getCandidates(SearchFilter filter) {
-        ArrayList<User> users = null;
-
-        return users;
+    public static void getCandidates(ServerCallback callback, Activity activity) {
+        GetAsync task = new GetAsync(callback, activity);
+        task.execute("candidates");
     }
 
     /**

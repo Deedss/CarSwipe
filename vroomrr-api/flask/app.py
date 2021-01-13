@@ -277,7 +277,7 @@ def addCar(kenteken):
 			newcar = Car()
 			newcar.license_plate = car['kenteken']
 			newcar.brand = car['merk']
-			newcar.build_year = car['datum_eerste_afgifte_nederland']
+			newcar.build_year = int(str(car['datum_eerste_afgifte_nederland'])[:4])
 			newcar.color = car['eerste_kleur']
 			newcar.fuel_type = car_fuel['brandstof_omschrijving']
 			# Check if this car is the first car for this user if so make default
