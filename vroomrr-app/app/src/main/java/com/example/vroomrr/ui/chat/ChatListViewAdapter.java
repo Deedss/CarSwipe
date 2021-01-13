@@ -47,6 +47,9 @@ public class ChatListViewAdapter extends RecyclerView.Adapter<ChatListViewAdapte
        // holder.Chat_image.setImageResource(Chats.get(position).getImageResource());
         holder.Chat_name.setText(Chats.get(position).getName());
         holder.Chat_description.setText(Chats.get(position).getDescription());
+        if(Chats.get(position).getBitmap() != null){
+            holder.Chat_image.setImageBitmap(Chats.get(position).getBitmap());
+        }
     }
 
     @Override

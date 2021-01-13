@@ -1,11 +1,18 @@
 package com.example.vroomrr;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -19,6 +26,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.vroomrr.ui.login.LoginActivity;
 import com.google.android.material.navigation.NavigationView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setupNavigationDrawer() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        final NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.getMenu().findItem(R.id.nav_logout).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -73,8 +82,53 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        final User u = new User();
+        final View headerView = navigationView.getHeaderView(0);
+
+        ServerConnection.getPublicKey(u, new ServerCallback() {
+            @Override
+            public void completionHandler(String object, String url) {
+                User user = new Gson().fromJson(object, User.class);
+                TextView navUsername = headerView.findViewById(R.id.text1);
+                navUsername.setText(user.getName());
+            }
+        }, this);
+
+        ServerConnection.getCars(u, new ServerCallback() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void completionHandler(String object, String url) {
+                ArrayList<Car> cars = new Gson().fromJson(object, new TypeToken<ArrayList<Car>>(){}.getType());
+                for(Car car : cars){
+                    if(car.isSelected()){
+                        TextView underText = headerView.findViewById(R.id.text2);
+                        underText.setText(car.getBrand() + " " + car.getType() + " - " + car.getLicense_plate());
+                        loadCarImage(car, headerView);
+                        return;
+                    }
+                }
+            }
+        },this);
+
     }
 
+    private void loadCarImage(Car c, final View v){
+        ServerConnection.getCarImages(c, new ServerCallback() {
+            @Override
+            public void completionHandler(String object, String url) {
+                ArrayList<CarImage> carimages = new Gson().fromJson(object, new TypeToken<ArrayList<CarImage>>(){}.getType());
+                try {
+                    Bitmap bitmap = new ServerConnection.GetImageFromUrl().execute(carimages.get(0).getCar_images_id()).get();
+                    ImageView i = v.findViewById(R.id.imageView);
+                    i.setImageBitmap(getResizedBitmap(bitmap, 500));
+                }catch (Exception e){
+
+                }
+
+            }
+        },this);
+    }
     private void logout() {
         SharedPreferences SP = Cryptography.getEncryptedSharedPreferences(this);
         SharedPreferences.Editor editor = SP.edit();
@@ -112,6 +166,21 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    private Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float)width / (float) height;
+        if (bitmapRatio > 0) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
     }
 
 }

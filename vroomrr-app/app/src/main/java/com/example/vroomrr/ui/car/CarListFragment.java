@@ -165,9 +165,9 @@ public class CarListFragment extends Fragment implements CarListViewAdapter.OnAc
                     ArrayList<CarImage> carimages = new Gson().fromJson(object, new TypeToken<ArrayList<CarImage>>(){}.getType());
                     try {
                         // Only inserts first one atm.
-                        Bitmap bitmap = new ServerConnection.GetImageFromUrl().execute("https://grolink.nl/cars/image/" + carimages.get(0).getCar_images_id()).get();
+                        Bitmap bitmap = new ServerConnection.GetImageFromUrl().execute(carimages.get(0).getCar_images_id()).get();
                         carImageHashMap.put(car, carimages);
-                        images.add(bitmap);
+                        images.add(getResizedBitmap(bitmap,200));
                         adapter.updateImages(images);
                     } catch (ExecutionException | InterruptedException e) {
                         e.printStackTrace();
@@ -204,5 +204,20 @@ public class CarListFragment extends Fragment implements CarListViewAdapter.OnAc
      */
     public static void setBitmap_transfer(Bitmap bitmap_transfer_param) {
         bitmap_transfer = bitmap_transfer_param;
+    }
+
+    private Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float)width / (float) height;
+        if (bitmapRatio > 0) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
     }
 }

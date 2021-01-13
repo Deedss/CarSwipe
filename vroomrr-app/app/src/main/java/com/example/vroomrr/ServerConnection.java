@@ -246,7 +246,7 @@ final public class ServerConnection {
 
         @Override
         protected Bitmap doInBackground(String... url) {
-            String stringUrl = url[0];
+            String stringUrl = "https://grolink.nl/cars/image/" + url[0];
             Bitmap bitmap = null;
             InputStream inputStream;
             try {

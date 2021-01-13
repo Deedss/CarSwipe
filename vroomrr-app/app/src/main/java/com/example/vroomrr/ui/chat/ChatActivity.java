@@ -35,6 +35,8 @@ public class ChatActivity extends AppCompatActivity implements ChatMessagesListV
     private PublicKey encodingKeySelf;
     private Chat chat;
     private User currentUser;
+    private boolean stop_refresh = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,9 +64,16 @@ public class ChatActivity extends AppCompatActivity implements ChatMessagesListV
         handler.postDelayed(new Runnable() {
             public void run() {
                 updateList();
-                handler.postDelayed(this, 1000);
+                if(!stop_refresh) {
+                    handler.postDelayed(this, 1000);
+                }
             }
         }, 1000);
+    }
+
+    public void onStop () {
+        stop_refresh = true;
+        super.onStop();
     }
 
     public void updateList(){

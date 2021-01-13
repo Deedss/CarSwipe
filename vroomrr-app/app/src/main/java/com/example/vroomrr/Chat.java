@@ -1,5 +1,7 @@
 package com.example.vroomrr;
 
+import android.graphics.Bitmap;
+
 import java.util.ArrayList;
 
 public class Chat {
@@ -13,6 +15,7 @@ public class Chat {
     private String name;
     private String description;
     private String image;
+    private Bitmap bitmap;
 
     /**
      * Constructor
@@ -43,4 +46,13 @@ public class Chat {
     public String getName() { return name;}
     public void setDescription(String n) { description = n;}
     public String getDescription() { return description;}
+
+    public Bitmap getBitmap(){
+        return bitmap;
+    }
+
+    public void setBitmap(Bitmap b){
+        bitmap = b;
+    }
+
 }

@@ -47,7 +47,7 @@ public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.
                 holder.car_image.setImageBitmap(images.get(position));
             }
         }
-        holder.car_name.setText(cars.get(position).getType());
+        holder.car_name.setText(cars.get(position).getBrand() + " " + cars.get(position).getType());
         holder.car_license.setText(cars.get(position).getLicense_plate());
     }
 
@@ -89,7 +89,6 @@ public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.
         ImageView car_image;
         TextView car_name;
         TextView car_license;
-        ImageButton car_deletebtn;
         LinearLayout car_row_clickable;
 
         public CarListViewHolder(@NonNull View itemView) {
@@ -97,10 +96,8 @@ public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.
             this.car_image = itemView.findViewById(R.id.car_image);
             this.car_name = itemView.findViewById(R.id.car_name);
             this.car_license = itemView.findViewById(R.id.car_license);
-            this.car_deletebtn = itemView.findViewById(R.id.car_deletebtn);
             this.car_row_clickable = itemView.findViewById(R.id.car_row_clickable);
 
-            car_deletebtn.setOnClickListener(this);
             car_row_clickable.setOnClickListener(this);
             car_image.setOnClickListener(this);
 
@@ -108,11 +105,12 @@ public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.
 
         @Override
         public void onClick(View v) {
-            if (v.getId() == car_deletebtn.getId()){
-                mListener.deleteCar(getAdapterPosition());
-            } else {
-                mListener.openCar(getAdapterPosition());
-            }
+            mListener.openCar(getAdapterPosition());
+//            if (v.getId() == car_deletebtn.getId()){
+//                mListener.deleteCar(getAdapterPosition());
+//            } else {
+//                mListener.openCar(getAdapterPosition());
+//            }
         }
     }
 
