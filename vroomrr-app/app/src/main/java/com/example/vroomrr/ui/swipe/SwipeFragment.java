@@ -20,13 +20,16 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.vroomrr.Candidate;
+import com.example.vroomrr.Car;
 import com.example.vroomrr.CarImage;
 import com.example.vroomrr.Chat;
+import com.example.vroomrr.Cryptography;
 import com.example.vroomrr.Opinion;
 import com.example.vroomrr.R;
 import com.example.vroomrr.ServerCallback;
 import com.example.vroomrr.ServerConnection;
 import com.example.vroomrr.Session;
+import com.example.vroomrr.User;
 import com.example.vroomrr.ui.chat.ChatActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -62,21 +65,20 @@ public class SwipeFragment extends Fragment implements ServerCallback {
         green.setVisibility(View.GONE);
         yellow.setVisibility(View.GONE);
 
-        ServerConnection.getCandidates(new ServerCallback() {
+        User u = new User();
+        u.setUserId(Cryptography.getFromSharedPreferences(this.getContext(), String.valueOf(R.string.UserId)));
+
+        ServerConnection.getCars(u, new ServerCallback() {
             @Override
             public void completionHandler(String object, String url) {
-                candidates = new Gson().fromJson(object, new TypeToken<ArrayList<Candidate>>(){}.getType());
-                Collections.shuffle(candidates);
-                if(candidates.size() > 0) {
-                    loadCandidate(candidates.get(current_candidate));
-                    red.setVisibility(View.VISIBLE);
-                    green.setVisibility(View.VISIBLE);
-                    yellow.setVisibility(View.VISIBLE);
+                ArrayList<Car> cars = new Gson().fromJson(object, new TypeToken<ArrayList<Car>>(){}.getType());
+                if(cars.size() == 0){
+                    loadError("You need to add a car before you can find others");
                 }else{
-                    loadError();
+                    loadCandidates();
                 }
-            }
-        }, getActivity());
+
+            }}, getActivity());
 
         currentimage.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
@@ -148,11 +150,31 @@ public class SwipeFragment extends Fragment implements ServerCallback {
         return root;
     }
 
+    private void loadCandidates(){
+        ServerConnection.getCandidates(new ServerCallback() {
+            @Override
+            public void completionHandler(String object, String url) {
+                candidates = new Gson().fromJson(object, new TypeToken<ArrayList<Candidate>>(){}.getType());
+                Collections.shuffle(candidates);
+                if(candidates.size() > 0) {
+                    loadCandidate(candidates.get(current_candidate));
+                    red.setVisibility(View.VISIBLE);
+                    green.setVisibility(View.VISIBLE);
+                    yellow.setVisibility(View.VISIBLE);
+                }else{
+                    loadError("No users found matching your criteria, check back later");
+                }
+            }
+        }, getActivity());
+    }
+
     private void imageTouched(int x, int y){
         if(x > currentimage.getWidth() / 2){
-            if(current_image < candidates.get(current_candidate).getCarImages().size() - 1){
-                current_image++;
-                loadCandidate(candidates.get(current_candidate));
+            if(candidates.size() != 0) {
+                if (current_image < candidates.get(current_candidate).getCarImages().size() - 1) {
+                    current_image++;
+                    loadCandidate(candidates.get(current_candidate));
+                }
             }
         }else{
             if(current_image > 0){
@@ -168,7 +190,7 @@ public class SwipeFragment extends Fragment implements ServerCallback {
             current_image = 0;
             loadCandidate(candidates.get(current_candidate));
         }else{
-            loadError();
+            loadError("You're all done");
         }
     }
 
@@ -195,13 +217,13 @@ public class SwipeFragment extends Fragment implements ServerCallback {
         }
     }
 
-    private void loadError(){
+    private void loadError(String e){
         red.setVisibility(View.GONE);
         green.setVisibility(View.GONE);
         yellow.setVisibility(View.GONE);
         title.setText("");
         description.setText("");
-        subtitle.setText("No users found matching your criteria, check back later");
+        subtitle.setText(e);
     }
 
 
