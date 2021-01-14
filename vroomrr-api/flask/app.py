@@ -13,6 +13,7 @@ from ext import db
 from rdw import RDW
 from wikimedia import Wikimedia
 from sqlalchemy import or_
+from PIL import Image
 
 import uuid, hashlib, urllib.request, base64, imghdr, os
 
@@ -303,6 +304,12 @@ def addCar(kenteken):
 			# Download image for car from Wikimedia
 			image_id = str(uuid.uuid4())
 			urllib.request.urlretrieve(Wikimedia().getImageUrl(car['merk'] + ' ' + car['handelsbenaming']), 'car_images/' + image_id + '.jpg')
+			basewidth = 300
+			img = Image.open('car_images/' + image_id + '.jpg')
+			wpercent = (basewidth / float(img.size[0]))
+			hsize = int((float(img.size[1]) * float(wpercent)))
+			img = img.resize((basewidth, hsize), Image.ANTIALIAS)
+			img.save('car_images/' + image_id + '.jpg')
 			image = Car_images()
 			image.car_images_id = image_id
 			image.license_plate = newcar.license_plate
