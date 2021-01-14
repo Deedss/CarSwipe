@@ -1,9 +1,11 @@
 package com.example.vroomrr.ui.car;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,6 +23,7 @@ import android.widget.Toolbar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.example.vroomrr.Car;
 import com.example.vroomrr.CarImage;
@@ -56,6 +59,7 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
     private ArrayList<Bitmap> bitmaps = new ArrayList<>();
     private ArrayList<CarImage> carImages = new ArrayList<>();
     private int current_image = 0;
+    private final int REQUEST_STORAGE_PERMISSION = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +124,7 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
             updateCar();
         }
         if(v == car_image_add){
-            selectImage();
+            checkAndRequestPermissions();
         }
         if(v == car_image_delete){
             deleteCarImageDialog();
@@ -381,5 +385,32 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
 
         AlertDialog alert11 = builder1.create();
         alert11.show();
+    }
+
+
+    /**
+     * Check permissions for access.
+     */
+    private void checkAndRequestPermissions() {
+        int read = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        if (read == PackageManager.PERMISSION_DENIED) {
+            requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, REQUEST_STORAGE_PERMISSION);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (requestCode == REQUEST_STORAGE_PERMISSION) {// If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0 &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                selectImage();
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), "Can't upload images from Gallery", Toast.LENGTH_LONG).show();
+        }
+            // Other 'case' lines to check for other
+        // permissions this app might request.
     }
 }
