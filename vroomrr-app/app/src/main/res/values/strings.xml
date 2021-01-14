@@ -45,13 +45,21 @@
     <!-- ImageView ContentDescription String -->
     <string name="car_image">Image of the car</string>
     <string name="car_name">Name of the car</string>
-    <string name="car_license">License plate</string>
+    <string name="car_license">kenteken</string>
     <string name="car_deletebtn">Image of delete icon</string>
 
     <string name="image_chat">Image of chat</string>
     <string name="text_chat">Text of chat</string>
-    <!-- TODO: Remove or change this placeholder text -->
+
+    <!-- Car Activity-->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="button_logout">Logout</string>
+    <string name="button_delete">delete</string>
+    <string name="car_color">kleur</string>
+    <string name="car_horsepower">pk</string>
+    <string name="car_build_year">bouwjaar</string>
+    <string name="car_fuel_types">brandstof</string>
+    <string name="car_description">Info</string>
+    <string name="car_selected">Selecteer</string>
 
 </resources>

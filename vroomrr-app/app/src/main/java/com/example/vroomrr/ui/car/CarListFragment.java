@@ -28,7 +28,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 public class CarListFragment extends Fragment implements CarListViewAdapter.OnActionListener{
@@ -40,16 +39,18 @@ public class CarListFragment extends Fragment implements CarListViewAdapter.OnAc
     private ArrayList<Car> cars = new ArrayList<>();
     private ArrayList<Bitmap> images = new ArrayList<>();
 
-    private HashMap<Car, ArrayList<CarImage>> carImageHashMap = new HashMap<>();
-
-    // Static bitmap to transfer to CarActivity (Intent.putExtra() == JAVA_BINDER ERROR)
-    private static Bitmap bitmap_transfer;
-
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_car_list, container, false);
         getCars();
         setupViews();
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getCars();
+        this.adapter.notifyDataSetChanged();
     }
 
     /**
@@ -157,7 +158,6 @@ public class CarListFragment extends Fragment implements CarListViewAdapter.OnAc
      */
     private void getAllCarImages(ArrayList<Car> cars){
         for(final Car car : this.cars){
-            carImageHashMap.clear();
             ServerConnection.getCarImages(car, new ServerCallback() {
                 @Override
                 public void completionHandler(String object, String url) {
@@ -165,7 +165,6 @@ public class CarListFragment extends Fragment implements CarListViewAdapter.OnAc
                     try {
                         // Only inserts first one atm.
                         Bitmap bitmap = new ServerConnection.GetImageFromUrl().execute(carimages.get(0).getCar_images_id()).get();
-                        carImageHashMap.put(car, carimages);
                         images.add(getResizedBitmap(bitmap,200));
                         adapter.updateImages(images);
                     } catch (ExecutionException | InterruptedException e) {
@@ -184,25 +183,7 @@ public class CarListFragment extends Fragment implements CarListViewAdapter.OnAc
     public void openCar(int adapterPosition) {
         Intent intent = new Intent(getActivity(), CarActivity.class);
         intent.putExtra("car_info", new Gson().toJson(cars.get(adapterPosition)));
-        intent.putExtra("carImage", new Gson().toJson(carImageHashMap.get(cars.get(adapterPosition)).get(0)));
-        setBitmap_transfer(images.get(adapterPosition));
         requireActivity().startActivity(intent);
-    }
-
-    /**
-     * Get bitmap for transfer to CarActivity
-     * @return return bitmap
-     */
-    public static Bitmap getBitmap_transfer() {
-        return bitmap_transfer;
-    }
-
-    /**
-     * Set Bitmap for transfer to CarActivity
-     * @param bitmap_transfer_param the bitmap to transfer
-     */
-    public static void setBitmap_transfer(Bitmap bitmap_transfer_param) {
-        bitmap_transfer = bitmap_transfer_param;
     }
 
     private Bitmap getResizedBitmap(Bitmap image, int maxSize) {
