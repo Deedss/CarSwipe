@@ -161,15 +161,22 @@ public class CarListFragment extends Fragment implements CarListViewAdapter.OnAc
             ServerConnection.getCarImages(car, new ServerCallback() {
                 @Override
                 public void completionHandler(String object, String url) {
-                    ArrayList<CarImage> carimages = new Gson().fromJson(object, new TypeToken<ArrayList<CarImage>>(){}.getType());
-                    try {
-                        // Only inserts first one atm.
-                        Bitmap bitmap = new ServerConnection.GetImageFromUrl().execute(carimages.get(0).getCar_images_id()).get();
-                        images.add(getResizedBitmap(bitmap,200));
-                        adapter.updateImages(images);
-                    } catch (ExecutionException | InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    final ArrayList<CarImage> carimages = new Gson().fromJson(object, new TypeToken<ArrayList<CarImage>>(){}.getType());
+                    // Only inserts first one atm.
+                    Runnable runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            Bitmap bitmap = null;
+                            try {
+                                bitmap = new ServerConnection.GetImageFromUrl().execute(carimages.get(0).getCar_images_id()).get();
+                            } catch (ExecutionException | InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            images.add(getResizedBitmap(bitmap,200));
+                            adapter.updateImages(images);
+                        }
+                    };
+                    runnable.run();
                 }
             }, getActivity());
         }

@@ -176,20 +176,27 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
             public void completionHandler(String object, String url) {
             // All car images
             carImages = new Gson().fromJson(object, new TypeToken<ArrayList<CarImage>>(){}.getType());
-            try {
                 bitmaps.clear();
                 current_image = 0;
                 // Get bitmaps from each carImage
-                for(CarImage carImage : carImages){
-                    Bitmap bitmap = new ServerConnection.GetImageFromUrl().execute(carImage.getCar_images_id()).get();
-                    bitmaps.add(getResizedBitmap(bitmap,500));
+                for(final CarImage carImage : carImages){
+                    Runnable runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            Bitmap bitmap = null;
+                            try {
+                                bitmap = new ServerConnection.GetImageFromUrl().execute(carImage.getCar_images_id()).get();
+                            } catch (ExecutionException | InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            bitmaps.add(getResizedBitmap(bitmap,500));
+                        }
+                    };
+                    runnable.run();
                 }
                 current_image = bitmaps.size() - 1;
                 // Fill in car data
                 insertCarData();
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }
             }
         }, this);
     }

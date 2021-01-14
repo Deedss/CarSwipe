@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -25,6 +24,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class ChatListFragment extends Fragment implements ChatListViewAdapter.OnActionListener, ServerCallback {
     private View root;
@@ -82,12 +82,25 @@ public class ChatListFragment extends Fragment implements ChatListViewAdapter.On
                             ServerConnection.getCarImages(car, new ServerCallback() {
                                 @Override
                                 public void completionHandler(String object, String url) {
-                                    ArrayList<CarImage> carimages = new Gson().fromJson(object, new TypeToken<ArrayList<CarImage>>(){}.getType());
+                                    final ArrayList<CarImage> carimages = new Gson().fromJson(object, new TypeToken<ArrayList<CarImage>>(){}.getType());
                                     try {
-                                        Bitmap bitmap = new ServerConnection.GetImageFromUrl().execute(carimages.get(0).getCar_images_id()).get();
-                                        c.setBitmap(getResizedBitmap(bitmap, 200));
-                                        chats.set(chats.indexOf(c), c);
-                                        adapter.updateData(chats);
+                                        Runnable runnable = new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Bitmap bitmap = null;
+                                                try {
+                                                    bitmap = new ServerConnection.GetImageFromUrl().execute(carimages.get(0).getCar_images_id()).get();
+                                                } catch (ExecutionException e) {
+                                                    e.printStackTrace();
+                                                } catch (InterruptedException e) {
+                                                    e.printStackTrace();
+                                                }
+                                                c.setBitmap(getResizedBitmap(bitmap, 200));
+                                                chats.set(chats.indexOf(c), c);
+                                                adapter.updateData(chats);
+                                            }
+                                        };
+                                        runnable.run();
                                     }catch (Exception e){
                                     }
                                 }

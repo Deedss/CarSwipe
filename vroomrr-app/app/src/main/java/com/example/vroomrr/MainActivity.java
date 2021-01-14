@@ -7,12 +7,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -31,6 +29,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -121,11 +120,24 @@ public class MainActivity extends AppCompatActivity {
         ServerConnection.getCarImages(c, new ServerCallback() {
             @Override
             public void completionHandler(String object, String url) {
-                ArrayList<CarImage> carimages = new Gson().fromJson(object, new TypeToken<ArrayList<CarImage>>(){}.getType());
+                final ArrayList<CarImage> carimages = new Gson().fromJson(object, new TypeToken<ArrayList<CarImage>>(){}.getType());
                 try {
-                    Bitmap bitmap = new ServerConnection.GetImageFromUrl().execute(carimages.get(0).getCar_images_id()).get();
-                    ImageView i = v.findViewById(R.id.imageView);
-                    i.setImageBitmap(getResizedBitmap(bitmap, 500));
+                    Runnable runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            Bitmap bitmap = null;
+                            try {
+                                bitmap = new ServerConnection.GetImageFromUrl().execute(carimages.get(0).getCar_images_id()).get();
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            ImageView i = v.findViewById(R.id.imageView);
+                            i.setImageBitmap(getResizedBitmap(bitmap, 500));
+                        }
+                    };
+                    runnable.run();
                 }catch (Exception e){
 
                 }

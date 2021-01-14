@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,14 +20,12 @@ import androidx.fragment.app.Fragment;
 
 import com.example.vroomrr.Candidate;
 import com.example.vroomrr.Car;
-import com.example.vroomrr.CarImage;
 import com.example.vroomrr.Chat;
 import com.example.vroomrr.Cryptography;
 import com.example.vroomrr.Opinion;
 import com.example.vroomrr.R;
 import com.example.vroomrr.ServerCallback;
 import com.example.vroomrr.ServerConnection;
-import com.example.vroomrr.Session;
 import com.example.vroomrr.User;
 import com.example.vroomrr.ui.chat.ChatActivity;
 import com.google.gson.Gson;
@@ -36,6 +33,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.ExecutionException;
 
 public class SwipeFragment extends Fragment implements ServerCallback {
     private View root;
@@ -195,7 +193,7 @@ public class SwipeFragment extends Fragment implements ServerCallback {
     }
 
     @SuppressLint("SetTextI18n")
-    private void loadCandidate(Candidate candidate){
+    private void loadCandidate(final Candidate candidate){
         title.setText(candidate.getUser().getName());
         subtitle.setText(candidate.getCar().getBuild_year() + " " + candidate.getCar().getBrand() + " " + candidate.getCar().getType()
                 + " - " + candidate.getCar().getLicense_plate());
@@ -209,8 +207,21 @@ public class SwipeFragment extends Fragment implements ServerCallback {
 
         try {
             if(candidate.getCarImages().size() > 0) {
-                Bitmap image = new ServerConnection.GetImageFromUrl().execute(candidate.getCarImages().get(current_image).getCar_images_id()).get();
-                currentimage.setImageBitmap(image);
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        Bitmap image = null;
+                        try {
+                            image = new ServerConnection.GetImageFromUrl().execute(candidate.getCarImages().get(current_image).getCar_images_id()).get();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        currentimage.setImageBitmap(image);
+                    }
+                };
+                runnable.run();
             }
         }catch (Exception e){
             Log.e("Error", e.toString());
