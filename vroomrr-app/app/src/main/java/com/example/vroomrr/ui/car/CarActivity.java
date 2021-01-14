@@ -10,10 +10,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import com.example.vroomrr.Car;
 import com.example.vroomrr.CarImage;
@@ -32,7 +32,8 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
     private TextView car_brand;
     private TextView car_model;
     private TextView car_mileage;
-    private ImageButton car_save;
+    private ImageButton car_menu_button;
+    private Toolbar toolbar;
 
     // other variables
     private Car car;
@@ -41,18 +42,20 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
     Gson gson = new Gson();
     private Bitmap tmpbitmap;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car);
 
-//        setupToolbar();
         setupViews();
+        setupToolbar();
     }
 
     public void setupToolbar() {
-        Toolbar toolbar = findViewById(R.id.car_toolbar);
-        setSupportActionBar(toolbar);
+        toolbar = findViewById(R.id.car_toolbar);
+        toolbar.setTitle(car.getBrand() + " " + car.getType());
+        setActionBar(toolbar);
     }
 
     /**
@@ -65,7 +68,7 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
         car_brand = findViewById(R.id.car_brand);
         car_model = findViewById(R.id.car_model);
         car_mileage = findViewById(R.id.car_mileage);
-        car_save = findViewById(R.id.car_save);
+        car_menu_button = findViewById(R.id.car_menu_button);
 
         car_imageView.setOnClickListener(this);
 
@@ -97,7 +100,7 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
         if(v == car_imageView){
             selectImage();
         }
-        if(v == car_save){
+        if(v == car_menu_button){
             updateCar();
         }
     }
