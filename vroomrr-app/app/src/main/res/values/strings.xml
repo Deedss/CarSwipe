@@ -19,13 +19,20 @@
     <string name="placeholder_password">Wachtwoord</string>
     <string name="placeholder_license">Kenteken</string>
     <string name="placeholder_name">Naam</string>
+    <string name="placeholder_message">Message</string>
+    <string name="placeholder_sender">Sender</string>
 
     <!-- Button Strings -->
     <string name="button_register">Registreren</string>
     <string name="button_login">Inloggen</string>
     <string name="button_save">Save</string>
     <string name="button_add">Add</string>
+
     <!-- Image Descriptions -->
+    <string name="swipe_image_red">Dislike</string>
+    <string name="swipe_image_orange">Doubt</string>
+    <string name="swipe_image_green">Like</string>
+    <string name="vehicle_image">Vehicle Image</string>
 
     <!-- Title Strings -->
 

@@ -25,6 +25,13 @@ public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.
     private Context context;
     private OnActionListener mListener;
 
+    /**
+     * Constructor
+     * @param context context of the application
+     * @param listener Listener to attach to.
+     * @param cars Arraylist to add into ListView
+     * @param images Arraylist of images to add into the ListView
+     */
     public CarListViewAdapter(Context context, OnActionListener listener, ArrayList<Car> cars, ArrayList<Bitmap> images) {
         this.context = context;
         this.mListener = listener;
@@ -51,6 +58,9 @@ public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.
         holder.car_license.setText(cars.get(position).getLicense_plate());
     }
 
+    /**
+     * Gets the size of the ListView items.
+     */
     @Override
     public int getItemCount() {
         return cars.size();
@@ -78,12 +88,17 @@ public class CarListViewAdapter extends RecyclerView.Adapter<CarListViewAdapter.
         notifyDataSetChanged();
     }
 
+    /**
+     * Interfact with the onactions for the listview
+     */
     interface OnActionListener{
         void deleteCar(int adapterPosition);
         void openCar(int adapterPosition);
     }
 
-
+    /**
+     * ListView holder
+     */
     public class CarListViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
         // Variables
         ImageView car_image;

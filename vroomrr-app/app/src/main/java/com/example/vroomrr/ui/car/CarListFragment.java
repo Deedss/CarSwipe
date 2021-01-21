@@ -186,6 +186,9 @@ public class CarListFragment extends Fragment implements CarListViewAdapter.OnAc
         requireActivity().startActivity(intent);
     }
 
+    /**
+     * Resizes the bitmap to reduce processing power. And increase loading times.
+     */
     private Bitmap getResizedBitmap(Bitmap image, int maxSize) {
         int width = image.getWidth();
         int height = image.getHeight();

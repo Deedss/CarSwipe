@@ -54,7 +54,7 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
     private FloatingActionButton car_image_add;
     private FloatingActionButton car_image_delete;
 
-    // other variables
+    // Other variables
     private Car car;
     private ArrayList<Bitmap> bitmaps = new ArrayList<>();
     private ArrayList<CarImage> carImages = new ArrayList<>();
@@ -70,7 +70,9 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
         setupToolbar();
     }
 
-    // Setup the toolbar
+    /**
+     * Setups the toolbar within the application
+     */
     public void setupToolbar() {
         Toolbar toolbar = findViewById(R.id.car_toolbar);
         toolbar.setTitle(car.getBrand() + " " + car.getType());
@@ -399,6 +401,9 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
         }
     }
 
+    /**
+     * Asks for permissions when first opened.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
@@ -410,7 +415,5 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
         } else {
             Toast.makeText(getApplicationContext(), "Can't upload images from Gallery", Toast.LENGTH_LONG).show();
         }
-            // Other 'case' lines to check for other
-        // permissions this app might request.
     }
 }

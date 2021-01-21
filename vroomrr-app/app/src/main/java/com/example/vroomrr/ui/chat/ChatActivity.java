@@ -76,6 +76,9 @@ public class ChatActivity extends AppCompatActivity implements ChatMessagesListV
         super.onStop();
     }
 
+    /**
+     * Updates the screen with new messages.
+     */
     public void updateList(){
         ServerConnection.getChatMsgs(new ServerCallback() {
             @Override
@@ -142,6 +145,9 @@ public class ChatActivity extends AppCompatActivity implements ChatMessagesListV
     }
 
 
+    /**
+     * Sends message to be processed by the API and empties the neccesary fields.
+     */
     public void sendClick(final View view) {
         final EditText text = findViewById(R.id.editText);
         if(text.getText().length() == 0){

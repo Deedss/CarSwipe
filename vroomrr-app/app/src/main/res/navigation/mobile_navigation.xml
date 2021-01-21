@@ -18,12 +18,6 @@
         tools:layout="@layout/fragment_chat" />
 
     <fragment
-        android:id="@+id/nav_info"
-        android:name="com.example.vroomrr.ui.info.InfoFragment"
-        android:label="@string/menu_info"
-        tools:layout="@layout/fragment_info" />
-
-    <fragment
         android:id="@+id/nav_car"
         android:name="com.example.vroomrr.ui.car.CarListFragment"
         android:label="@string/menu_car"

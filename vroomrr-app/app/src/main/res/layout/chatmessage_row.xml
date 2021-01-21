@@ -9,8 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="10dp"
-        android:paddingRight="15dp"
-        android:paddingLeft="60dp"
+        android:paddingEnd="15dp"
+        android:paddingStart="60dp"
         android:clipToPadding="false"
         android:id="@+id/msg_sent_body">
 
@@ -22,45 +22,42 @@
             android:textColor="#fff"
             android:padding="10dp"
             android:elevation="2dp"
-            android:textSize="18dp"
-            android:layout_alignParentRight="true"
-            android:text="Message"
-            />
+            android:textSize="18sp"
+            android:layout_alignParentEnd="true"
+            android:text="@string/placeholder_message"/>
 
     </RelativeLayout>
-    <!--    received message example-->
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="10dp"
-        android:paddingLeft="15dp"
-        android:paddingRight="60dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="60dp"
         android:clipToPadding="false"
         android:id="@+id/msg_recv_body">
 
 
         <TextView
             android:id="@+id/name"
-            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="4dp"
-            android:text="Sender"/>
+            android:text="@string/placeholder_sender"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/msg_recv"
             android:layout_below="@+id/name"
-            android:layout_alignLeft="@+id/name"
+            android:layout_alignStart="@+id/name"
             android:background="@drawable/received_message"
             android:paddingVertical="12dp"
             android:paddingHorizontal="16dp"
             android:elevation="2dp"
-            android:textSize="18dp"
-            android:text="Message"
-            />
+            android:textSize="18sp"
+            android:text="@string/placeholder_message"/>
     </RelativeLayout>
-
-    </LinearLayout>
+</LinearLayout>
 
