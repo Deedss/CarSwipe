@@ -398,7 +398,10 @@ public class CarActivity extends AppCompatActivity implements View.OnClickListen
 
         if (read == PackageManager.PERMISSION_DENIED) {
             requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, REQUEST_STORAGE_PERMISSION);
+        } else {
+            selectImage();
         }
+
     }
 
     /**
